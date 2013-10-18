@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WokabStar</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Wonderful day! and a bit of statistics:</string>
+    <string name="edit_dict">Edit dictionary</string>
+    <string name="start">Start training</string>
+    <string name="t_opt">Options</string>
+    <string name="title_activity_work_on_dict">Work On Dictionary</string>
+    <string name="work_on_dict_hint">You are welcome to search for existent or create new entry:</string>
+    <string name="work_on_dict_search_hint">search button</string>
+    <string name="work_on_dict_edit_hint">edit button</string>
+    <string name="work_on_dict_save_hint">save button</string>
+    <string name="work_on_dict_search_inf">Searching info</string>
+    <string name="work_on_dict_not_found">Sorry, word not found. Want to add this? Fill info below and Save!</string>
+    <string name="type_prompt">Choose a type</string>
+    <string-array name="word_type_arrays">
+        <item>der</item>
+        <item>die</item>
+        <item>das</item>
+        <item>verb</item>
+        <item>adverb</item>
+        <item>other</item>
+    </string-array>
+    <string name="level_prompt">Choose a level</string>
+    <string-array name="word_level_arrays">
+        <item>A1</item>
+        <item>A2</item>
+        <item>B1</item>
+        <item>B2</item>
+        <item>C1</item>
+        <item>C2</item>
+    </string-array>
+    
+</resources>
