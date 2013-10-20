@@ -140,8 +140,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     }
 
 
-    protected void onResume(){
-       super.onResume();
+    protected void onStart(){
+       super.onStart();
        mDbHelper = new TrnrDbHelper(this);
        db = mDbHelper.getWritableDatabase();
        db.execSQL("DELETE FROM " + TrnrEntry.TABLE_TDICT);
@@ -155,6 +155,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
        addNewWordToDict(TrnrEntry.TYPE_VERB, "gehen","to go", 0, 0);
        addNewWordToDict(TrnrEntry.TYPE_OTHER, "gehen wir","we go", 0, 0);
     }
+    
     protected void onPause(){
         super.onPause();
         db.close();
@@ -212,6 +213,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
           setEditEnabled(false);
           setRecycleEnabled(false);
         }
+        c.close();
     }
     public void onEditClick(View v){
         enableAllFields(true);
