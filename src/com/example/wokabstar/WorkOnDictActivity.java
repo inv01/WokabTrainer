@@ -86,7 +86,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         setRecycleEnabled(false);
     }
     
-    public void addNewWordToDict(char art, String new_word,
+    public long getNewWordID(char art, String new_word,
                                  String new_translation, int state, int level){
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
@@ -104,6 +104,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
             System.out.println(getResources().getString(R.string.error_inserting) + art + ", " + new_word 
                     + ", " + new_translation + ", " + state + ", " + level);
         }
+        return newRowId;
     }
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -144,6 +145,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
        super.onStart();
        mDbHelper = new TrnrDbHelper(this);
        db = mDbHelper.getWritableDatabase();
+       /*
        db.execSQL("DELETE FROM " + TrnrEntry.TABLE_TDICT);
        
        addNewWordToDict(TrnrEntry.TYPE_ADJECTIVE, "schon","beautiful", 0, 0);
@@ -154,6 +156,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
        addNewWordToDict(TrnrEntry.TYPE_NEUTRAL, "Madchen","girl", 0, 0);
        addNewWordToDict(TrnrEntry.TYPE_VERB, "gehen","to go", 0, 0);
        addNewWordToDict(TrnrEntry.TYPE_OTHER, "gehen wir","we go", 0, 0);
+       */
     }
     
     protected void onPause(){
@@ -250,7 +253,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     }
         int word_level = (int) sp_wordLevel.getSelectedItemId();
         
-        addNewWordToDict(word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+        selectedID = (int) getNewWordID(word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+        txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
         enableAllFields(false);
         setSaveEnabled(false);
         setRecycleEnabled(true);
