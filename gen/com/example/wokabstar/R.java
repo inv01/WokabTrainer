@@ -980,10 +980,19 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_launcher=0x7f020057;
-        public static final int pencil=0x7f020058;
-        public static final int poolbird=0x7f020059;
-        public static final int search=0x7f02005a;
+        public static final int ic_dict=0x7f020057;
+        public static final int ic_floppy=0x7f020058;
+        public static final int ic_floppy_disable=0x7f020059;
+        public static final int ic_launcher=0x7f02005a;
+        public static final int ic_options=0x7f02005b;
+        public static final int ic_pencil=0x7f02005c;
+        public static final int ic_pencil_disable=0x7f02005d;
+        public static final int ic_recycle=0x7f02005e;
+        public static final int ic_recycle_disable=0x7f02005f;
+        public static final int ic_recycle_full=0x7f020060;
+        public static final int ic_recycle_full_disable=0x7f020061;
+        public static final int ic_search=0x7f020062;
+        public static final int ic_start=0x7f020063;
     }
     public static final class id {
         public static final int action_bar=0x7f05001a;
@@ -999,16 +1008,17 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f05002f;
         public static final int action_mode_bar_stub=0x7f05002e;
         public static final int action_mode_close_button=0x7f050022;
-        public static final int action_settings=0x7f050051;
+        public static final int action_settings=0x7f050054;
         public static final int activity_chooser_view_content=0x7f050023;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
         public static final int btnChangeOpt=0x7f050045;
         public static final int btnEdit=0x7f05004d;
-        public static final int btnEditDict=0x7f050044;
-        public static final int btnSave=0x7f050050;
+        public static final int btnEditDict=0x7f050043;
+        public static final int btnRemove=0x7f050053;
+        public static final int btnSave=0x7f050052;
         public static final int btnSearch=0x7f050049;
-        public static final int btnStartTrnr=0x7f050043;
+        public static final int btnStartTrnr=0x7f050044;
         public static final int checkbox=0x7f05002b;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050026;
@@ -1054,8 +1064,8 @@ containing a value of this type.
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
         public static final int showTitle=0x7f050006;
-        public static final int spinner1=0x7f05004e;
-        public static final int spinner2=0x7f05004f;
+        public static final int spinner1=0x7f05004f;
+        public static final int spinner2=0x7f050051;
         public static final int split_action_bar=0x7f05001c;
         public static final int submit_area=0x7f05003f;
         public static final int tabMode=0x7f050002;
@@ -1065,6 +1075,8 @@ containing a value of this type.
         public static final int txtHello=0x7f050042;
         public static final int txtHint=0x7f050046;
         public static final int txtInfo=0x7f05004a;
+        public static final int txtLevelInfo=0x7f050050;
+        public static final int txtTypeInfo=0x7f05004e;
         public static final int up=0x7f05001f;
         public static final int useLogo=0x7f050003;
         public static final int withText=0x7f05000c;
@@ -1121,7 +1133,8 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030017;
         public static final int activity_main=0x7f030018;
         public static final int activity_work_on_dict=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int list_item=0x7f03001a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
     }
     public static final class menu {
         public static final int main=0x7f0d0000;
@@ -1169,20 +1182,32 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_settings=0x7f0a000e;
+        public static final int alert_confirm_title=0x7f0a0013;
+        public static final int alert_empty_info=0x7f0a0016;
+        public static final int alert_info_title=0x7f0a0014;
         public static final int app_name=0x7f0a000d;
-        public static final int edit_dict=0x7f0a0010;
-        public static final int hello_world=0x7f0a000f;
-        public static final int level_prompt=0x7f0a001b;
-        public static final int start=0x7f0a0011;
-        public static final int t_opt=0x7f0a0012;
-        public static final int title_activity_work_on_dict=0x7f0a0013;
-        public static final int type_prompt=0x7f0a001a;
-        public static final int work_on_dict_edit_hint=0x7f0a0016;
-        public static final int work_on_dict_hint=0x7f0a0014;
-        public static final int work_on_dict_not_found=0x7f0a0019;
-        public static final int work_on_dict_save_hint=0x7f0a0017;
-        public static final int work_on_dict_search_hint=0x7f0a0015;
-        public static final int work_on_dict_search_inf=0x7f0a0018;
+        public static final int edit_dict=0x7f0a0017;
+        public static final int error_ins_msg=0x7f0a0023;
+        public static final int error_inserting=0x7f0a0022;
+        public static final int hello_world=0x7f0a0011;
+        public static final int level_prompt=0x7f0a0027;
+        public static final int ma_completed=0x7f0a0010;
+        public static final int ma_remove_alert_message=0x7f0a0015;
+        public static final int ma_to_remember=0x7f0a0012;
+        public static final int ma_to_repeat=0x7f0a000f;
+        public static final int start=0x7f0a0018;
+        public static final int t_opt=0x7f0a0019;
+        public static final int title_activity_work_on_dict=0x7f0a001a;
+        public static final int type_prompt=0x7f0a0024;
+        public static final int work_on_dict_edit_hint=0x7f0a001d;
+        public static final int work_on_dict_hint=0x7f0a001b;
+        public static final int work_on_dict_level_inf=0x7f0a0025;
+        public static final int work_on_dict_not_found=0x7f0a0021;
+        public static final int work_on_dict_remove_hint=0x7f0a001f;
+        public static final int work_on_dict_save_hint=0x7f0a001e;
+        public static final int work_on_dict_search_hint=0x7f0a001c;
+        public static final int work_on_dict_search_inf=0x7f0a0020;
+        public static final int work_on_dict_type_inf=0x7f0a0026;
     }
     public static final class style {
         /** 

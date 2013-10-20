@@ -24,6 +24,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/edtSearchWord"
+            android:selectAllOnFocus="true"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -35,9 +36,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@drawable/search"
+            android:onClick="onClickSearch"
+            android:background="@drawable/ic_search"
             android:contentDescription="@string/work_on_dict_search_hint"
-            android:src="@drawable/search" />
+            android:src="@drawable/ic_search" />
 
     </LinearLayout>
 
@@ -58,7 +60,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/edtOutWord"
-            android:enabled="true"
+            android:enabled="false"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -66,40 +68,72 @@
         />
         <ImageButton
             android:id="@+id/btnEdit"
+            android:onClick="onEditClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@drawable/pencil"
+            android:background="@drawable/ic_pencil"
             android:contentDescription="@string/work_on_dict_edit_hint"
-            android:enabled="true"
-            android:src="@drawable/pencil" />
+            android:enabled="false"
+            android:src="@drawable/ic_pencil"/>
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/txtTypeInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/linearLayout2"
+        android:layout_below="@+id/linearLayout2"
+        android:hint="@string/work_on_dict_type_inf"
+        android:text="@string/work_on_dict_type_inf" />
     <Spinner
         android:id="@+id/spinner1"
         android:entries="@array/word_type_arrays"
         android:prompt="@string/type_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout2"
-        android:layout_below="@+id/linearLayout2" />
+        android:layout_toRightOf="@+id/txtTypeInfo"
+        android:layout_below="@+id/linearLayout2"
+        android:enabled="false"/>
+    <TextView
+        android:id="@+id/txtLevelInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/spinner1"
+        android:layout_below="@+id/linearLayout2"
+        android:hint="@string/work_on_dict_level_inf"
+        android:text="@string/work_on_dict_level_inf" />
     <Spinner
         android:id="@+id/spinner2"
         android:entries="@array/word_level_arrays"
         android:prompt="@string/level_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/spinner1"
-        android:layout_below="@+id/linearLayout2" />
-    
+        android:layout_toRightOf="@+id/txtLevelInfo"
+        android:layout_below="@+id/linearLayout2"
+        android:enabled="false"/>
     <ImageButton
         android:id="@+id/btnSave"
-        android:enabled="true"
+        android:enabled="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:onClick="onSaveClick"
         android:layout_toRightOf="@+id/spinner2"
         android:layout_below="@+id/linearLayout2"
         android:contentDescription="@string/work_on_dict_save_hint"
-        android:src="@drawable/poolbird" />
+        android:background="@drawable/ic_floppy"
+        android:src="@drawable/ic_floppy"/>
+    <ImageButton
+        android:id="@+id/btnRemove"
+        android:enabled="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:onClick="onRemoveClick"
+        android:layout_toRightOf="@+id/btnSave"
+        android:layout_below="@+id/linearLayout2"
+        android:contentDescription="@string/work_on_dict_remove_hint"
+        android:background="@drawable/ic_recycle"
+        android:src="@drawable/ic_recycle"/>
 </RelativeLayout>

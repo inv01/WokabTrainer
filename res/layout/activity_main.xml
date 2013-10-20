@@ -14,35 +14,38 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
 
-    <Button
-        android:id="@+id/btnStartTrnr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnEditDict"
-        android:layout_alignRight="@+id/btnEditDict"
-        android:layout_below="@+id/btnEditDict"
-        android:onClick="onClickStartTrnr"
-        android:text="@string/start" />
-
-    <Button
-        android:id="@+id/btnChangeOpt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnStartTrnr"
-        android:layout_alignRight="@+id/btnStartTrnr"
-        android:layout_below="@+id/btnStartTrnr"
-        android:onClick="onClickChangeOpt"
-        android:text="@string/t_opt" />
-
-    <Button
+    <ImageButton
         android:id="@+id/btnEditDict"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@+id/txtHello"
         android:layout_below="@+id/txtHello"
-        android:layout_marginRight="42dp"
-        android:layout_marginTop="42dp"
         android:onClick="onClickEditDict"
-        android:text="@string/edit_dict" />
+        android:background="@drawable/ic_dict"
+        android:contentDescription="@string/edit_dict"
+        android:src="@drawable/ic_dict"/>
+    
+    <ImageButton
+        android:id="@+id/btnStartTrnr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtHello"
+        android:layout_toRightOf="@+id/btnEditDict"
+        android:onClick="onClickStartTrnr"
+        android:background="@drawable/ic_start"
+        android:contentDescription="@string/start"
+        android:src="@drawable/ic_start"/>
+
+    <ImageButton
+        android:id="@+id/btnChangeOpt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/btnStartTrnr"
+        android:layout_below="@+id/txtHello"
+        android:onClick="onClickChangeOpt"
+        android:background="@drawable/ic_options"
+        android:contentDescription="@string/t_opt"
+        android:src="@drawable/ic_options"/>
+
 
 </RelativeLayout>
