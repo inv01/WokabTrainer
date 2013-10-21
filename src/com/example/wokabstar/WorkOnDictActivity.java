@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -64,26 +66,61 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         sp_wordType = (Spinner)findViewById(R.id.spinner1);
         sp_wordLevel = (Spinner)findViewById(R.id.spinner2);
         edtSearchWord = (AutoCompleteTextView)findViewById(R.id.edtSearchWord);
+        //edtSearchWord.setThreshold(3);
         edtOutWord = (AutoCompleteTextView)findViewById(R.id.edtOutWord);
+        //edtOutWord.setThreshold(3);
         btnRemove = (ImageButton)findViewById(R.id.btnRemove);
-        /*
+
         edtSearchWord.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus)
                     onClickSearch(v);
             }
         });
+/*
         edtSearchWord.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                onKeySearch();
+                if(v instanceof AutoCompleteTextView){
+                    if ((char) keyCode == '*'){
+                        ((AutoCompleteTextView) v).setText("");
+                        ((AutoCompleteTextView) v).setThreshold(0);
+                        ((AutoCompleteTextView) v).showDropDown();
+                    } else {
+                        ((AutoCompleteTextView) v).setThreshold(3);
+                    }
+                }
                 return true;
             }
         });*/
+        
+        edtSearchWord.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                    long arg3) {
+                onClickSearch(arg1);
+            }
+        });
+        
         enableAllFields(false);
         setEditEnabled(false);
         setSaveEnabled(false);
         setRecycleEnabled(false);
+    }
+    
+    public void showAlert(String message){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(getResources().getString(R.string.alert_info_title));
+        alertDialogBuilder
+            .setMessage(message)
+            .setCancelable(true)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int id) {
+                    dialog.cancel();
+                }
+              });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
     
     public long getNewWordID(char art, String new_word,
@@ -145,6 +182,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
        super.onStart();
        mDbHelper = new TrnrDbHelper(this);
        db = mDbHelper.getWritableDatabase();
+       setAdapter();
        /*
        db.execSQL("DELETE FROM " + TrnrEntry.TABLE_TDICT);
        
@@ -252,8 +290,12 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         default: assert false : sp_wordType.getSelectedItemId();
     }
         int word_level = (int) sp_wordLevel.getSelectedItemId();
-        
-        selectedID = (int) getNewWordID(word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+        if (selectedID < 0){
+            selectedID = (int) getNewWordID(word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+        } else {
+            updateRecord(selectedID, word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+        }
+        setAdapter();
         txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
         enableAllFields(false);
         setSaveEnabled(false);
@@ -261,7 +303,21 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         setEditEnabled(true);
     }
     
+    public void updateRecord(int id, char word_type, String searchWord, String outWord, int state, int word_level){
+        ContentValues values = new ContentValues();
+        values.put(TrnrEntry.COLUMN_NAME_ARTIKEL, "" + word_type);
+        values.put(TrnrEntry.COLUMN_NAME_IN_WORD, searchWord);
+        values.put(TrnrEntry.COLUMN_NAME_OUT_WORD, "" + outWord);
+        values.put(TrnrEntry.COLUMN_NAME_STATE, state);
+        values.put(TrnrEntry.COLUMN_NAME_LEVEL, word_level);
+
+        String selection = TrnrEntry._ID + " = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+        db.update(TrnrEntry.TABLE_TDICT, values, selection, selectionArgs);
+    }
+    
     public void onRemoveClick(View v){
+        if (selectedID < 0) return;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(getResources().getString(R.string.alert_confirm_title));
         alertDialogBuilder
@@ -271,6 +327,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                 public void onClick(DialogInterface dialog,int id) {
                     mDbHelper.onRemoveRecord(db, selectedID);
                     clearFields();
+                    setAdapter();
                 }
               })
               .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -283,6 +340,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     }
     
     public void clearFields(){
+        txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
         sp_wordType.setSelection(0);
         sp_wordLevel.setSelection(0);
         edtOutWord.setText("");
@@ -326,8 +384,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         }
     }
 
-    public void onKeySearch() {
-        String[] in_words = mDbHelper.getWordsMatchingQuery(db, edtSearchWord.getText().toString());
+    public void setAdapter() {
+        String[] in_words = mDbHelper.getWordsMatchingQuery(db, "");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, in_words);
         edtSearchWord.setAdapter(adapter);
     }

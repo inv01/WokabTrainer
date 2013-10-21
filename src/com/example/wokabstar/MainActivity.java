@@ -60,7 +60,7 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
     }
 
     public int getCompletedRowsNum(){
-        String select = "SELECT "+TrnrEntry._ID+ " FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
+        String select = "SELECT "+TrnrEntry._ID + " FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
                 TrnrEntry.COLUMN_NAME_STATE + "='1'";
         Cursor c = db.rawQuery(select, null);
         int i = c.getCount();
@@ -98,5 +98,4 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
 }

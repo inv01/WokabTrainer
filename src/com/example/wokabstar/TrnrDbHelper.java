@@ -74,24 +74,28 @@ public class TrnrDbHelper extends SQLiteOpenHelper {
     }
 
     public String[] getWordsMatchingQuery(SQLiteDatabase db, String in_word){
-        if (in_word.length() < 3) { return new String[] {};}
+        String where = "";
+        if (!in_word.equals("")) where = " WHERE " + TrnrEntry.COLUMN_NAME_IN_WORD + " LIKE '" + in_word + "%'";
         String select = "SELECT "+ TrnrEntry._ID + ", "
                 + TrnrEntry.COLUMN_NAME_ARTIKEL + ", " + TrnrEntry.COLUMN_NAME_IN_WORD + ", "
                 + TrnrEntry.COLUMN_NAME_OUT_WORD + ", " + TrnrEntry.COLUMN_NAME_LEVEL 
                 + " FROM " + TrnrEntry.TABLE_TDICT
-                + " WHERE " + TrnrEntry.COLUMN_NAME_IN_WORD + " LIKE '" + in_word + "%'";
+                + where;
         Cursor cursor = db.rawQuery(select, null);
-        if(cursor.getCount() > 0)
-        {
+        if(cursor.getCount() > 0){
             String[] str = new String[cursor.getCount()];
             int i = 0;
             while (cursor.moveToNext()){
                  str[i] = cursor.getString(cursor.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD));
                  i++;
              }
+            cursor.close();
             return str;
         }
-        else {return new String[] {};}
+        else {
+            cursor.close();
+            return new String[] {};
+        }
     }
     
     public void onRemoveRecord(SQLiteDatabase db, int selectedID){

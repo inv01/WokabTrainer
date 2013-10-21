@@ -28,9 +28,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:gravity="top" >
-            <requestFocus />
-        </AutoCompleteTextView>
+            android:gravity="top" />
         <ImageButton
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
@@ -136,4 +134,5 @@
         android:contentDescription="@string/work_on_dict_remove_hint"
         android:background="@drawable/ic_recycle"
         android:src="@drawable/ic_recycle"/>
+
 </RelativeLayout>
