@@ -35,6 +35,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     private TrnrDbHelper mDbHelper;
     private SQLiteDatabase db;
     private int selectedID;
+    private String selectedWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +44,12 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         // Show the Up button in the action bar.
         setupActionBar();
         init();
-        /*
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        // Create the text view
-        TextView textView = new TextView(this);
-        textView.setTextSize(24);
-        textView.setText(message);
-        // Set the text view as the activity layout
-        setContentView(textView);*/
         
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // If your minSdkVersion is 11 or higher, instead use:
         // getActionBar().setDisplayHomeAsUpEnabled(true);
     }
-    
+
     private void init(){
         btnEdit = (ImageButton)findViewById(R.id.btnEdit);
         btnSearch = (ImageButton)findViewById(R.id.btnSearch);
@@ -66,34 +58,11 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         sp_wordType = (Spinner)findViewById(R.id.spinner1);
         sp_wordLevel = (Spinner)findViewById(R.id.spinner2);
         edtSearchWord = (AutoCompleteTextView)findViewById(R.id.edtSearchWord);
-        //edtSearchWord.setThreshold(3);
         edtOutWord = (AutoCompleteTextView)findViewById(R.id.edtOutWord);
-        //edtOutWord.setThreshold(3);
         btnRemove = (ImageButton)findViewById(R.id.btnRemove);
+        selectedID = -1;
+        selectedWord = "";
 
-        edtSearchWord.setOnFocusChangeListener(new OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                    onClickSearch(v);
-            }
-        });
-/*
-        edtSearchWord.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(v instanceof AutoCompleteTextView){
-                    if ((char) keyCode == '*'){
-                        ((AutoCompleteTextView) v).setText("");
-                        ((AutoCompleteTextView) v).setThreshold(0);
-                        ((AutoCompleteTextView) v).showDropDown();
-                    } else {
-                        ((AutoCompleteTextView) v).setThreshold(3);
-                    }
-                }
-                return true;
-            }
-        });*/
-        
         edtSearchWord.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -218,7 +187,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         Cursor c = db.rawQuery(select, null);
         
         if (c.moveToFirst()){
-            selectedID =  c.getInt(c.getColumnIndex(TrnrEntry._ID));
+            selectedID = c.getInt(c.getColumnIndex(TrnrEntry._ID));
+            selectedWord = c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD));
             String word_type = c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL));
             int word_level = c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL));
             edtOutWord.setText(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD)));
@@ -248,8 +218,12 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
             setSaveEnabled(false);
         } else {
           selectedID = -1;
+          selectedWord = "";
           txtInfo.setText(getResources().getString(R.string.work_on_dict_not_found));
           enableAllFields(true);
+          String s = edtSearchWord.getText().toString();
+          clearFields();
+          edtSearchWord.setText(s);
           setSaveEnabled(true);
           setEditEnabled(false);
           setRecycleEnabled(false);
@@ -257,9 +231,41 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         c.close();
     }
     public void onEditClick(View v){
+        if (selectedID < 0) {clearFields();}
+        
+        String typedWord = edtSearchWord.getText().toString();
+        if(!typedWord.equals(selectedWord)){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle(getResources().getString(R.string.alert_confirm_title));
+            alertDialogBuilder
+                .setMessage(getResources().getString(R.string.work_on_dict_alert_change_word)
+                        + " " + selectedWord + "->" + typedWord + "?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        enableAllFields(true);
+                        setSaveEnabled(true);
+                        setRecycleEnabled(true);
+                    }
+                  })
+                  .setNeutralButton("Search "+typedWord, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int id) {
+                            onClickSearch(edtSearchWord);
+                        }
+                   })
+                  .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        } else {
+        
         enableAllFields(true);
         setSaveEnabled(true);
         setRecycleEnabled(true);
+        }
     }
     
     public void onSaveClick(View v){
@@ -290,10 +296,11 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         default: assert false : sp_wordType.getSelectedItemId();
     }
         int word_level = (int) sp_wordLevel.getSelectedItemId();
+        selectedWord = edtSearchWord.getText().toString();
         if (selectedID < 0){
-            selectedID = (int) getNewWordID(word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+            selectedID = (int) getNewWordID(word_type, selectedWord, edtOutWord.getText().toString(), 0, word_level);
         } else {
-            updateRecord(selectedID, word_type, edtSearchWord.getText().toString(), edtOutWord.getText().toString(), 0, word_level);
+            updateRecord(selectedID, word_type, selectedWord, edtOutWord.getText().toString(), 0, word_level);
         }
         setAdapter();
         txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
@@ -327,6 +334,10 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                 public void onClick(DialogInterface dialog,int id) {
                     mDbHelper.onRemoveRecord(db, selectedID);
                     clearFields();
+                    enableAllFields(false);
+                    setRecycleEnabled(false);
+                    setSaveEnabled(false);
+                    setEditEnabled(false);
                     setAdapter();
                 }
               })
@@ -345,10 +356,6 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         sp_wordLevel.setSelection(0);
         edtOutWord.setText("");
         edtSearchWord.setText("");
-        enableAllFields(false);
-        setRecycleEnabled(false);
-        setSaveEnabled(false);
-        setEditEnabled(false);
     }
     
     public void enableAllFields(boolean enabled){
@@ -362,7 +369,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         if (enabled){
             btnRemove.setImageDrawable(getResources().getDrawable(R.drawable.ic_recycle));
         } else {
-              btnRemove.setImageDrawable(getResources().getDrawable(R.drawable.ic_recycle_disable));
+            btnRemove.setImageDrawable(getResources().getDrawable(R.drawable.ic_recycle_disable));
         }
     }
 

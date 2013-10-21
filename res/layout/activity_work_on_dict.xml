@@ -18,7 +18,7 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/txtHint"
         android:orientation="horizontal" >
 
@@ -52,7 +52,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/txtInfo"
         android:orientation="horizontal" >
 
@@ -76,12 +76,17 @@
             android:src="@drawable/ic_pencil"/>
 
     </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout2"
+        android:orientation="horizontal" >
     <TextView
         android:id="@+id/txtTypeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout2"
-        android:layout_below="@+id/linearLayout2"
         android:hint="@string/work_on_dict_type_inf"
         android:text="@string/work_on_dict_type_inf" />
     <Spinner
@@ -90,15 +95,11 @@
         android:prompt="@string/type_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/txtTypeInfo"
-        android:layout_below="@+id/linearLayout2"
         android:enabled="false"/>
     <TextView
         android:id="@+id/txtLevelInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/spinner1"
-        android:layout_below="@+id/linearLayout2"
         android:hint="@string/work_on_dict_level_inf"
         android:text="@string/work_on_dict_level_inf" />
     <Spinner
@@ -107,32 +108,33 @@
         android:prompt="@string/level_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/txtLevelInfo"
-        android:layout_below="@+id/linearLayout2"
         android:enabled="false"/>
-    <ImageButton
-        android:id="@+id/btnSave"
-        android:enabled="false"
-        android:layout_width="wrap_content"
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:onClick="onSaveClick"
-        android:layout_toRightOf="@+id/spinner2"
-        android:layout_below="@+id/linearLayout2"
-        android:contentDescription="@string/work_on_dict_save_hint"
-        android:background="@drawable/ic_floppy"
-        android:src="@drawable/ic_floppy"/>
-    <ImageButton
-        android:id="@+id/btnRemove"
-        android:enabled="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:onClick="onRemoveClick"
-        android:layout_toRightOf="@+id/btnSave"
-        android:layout_below="@+id/linearLayout2"
-        android:contentDescription="@string/work_on_dict_remove_hint"
-        android:background="@drawable/ic_recycle"
-        android:src="@drawable/ic_recycle"/>
-
+        android:layout_below="@+id/linearLayout3"
+        android:orientation="horizontal" >
+        <ImageButton
+            android:id="@+id/btnSave"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="onSaveClick"
+            android:contentDescription="@string/work_on_dict_save_hint"
+            android:background="@drawable/ic_floppy"
+            android:src="@drawable/ic_floppy"/>
+        <ImageButton
+            android:id="@+id/btnRemove"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="onRemoveClick"
+            android:contentDescription="@string/work_on_dict_remove_hint"
+            android:background="@drawable/ic_recycle"
+            android:src="@drawable/ic_recycle"/>
+    </LinearLayout>
 </RelativeLayout>

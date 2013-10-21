@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 public class MainActivity  extends android.support.v7.app.ActionBarActivity {
 
-    //public final static String EXTRA_MESSAGE = "com.example.wokabstar.MESSAGE";
     private ImageButton btnChangeOpt, btnStartTrnr, btnEditDict;
     private TextView txtHello;
     private TrnrDbHelper mDbHelper;
@@ -78,19 +77,13 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
     }
     public void onClickEditDict(View v) {
         Intent intent = new Intent(this, WorkOnDictActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.edit_message);
-        //String message = hello_world;//editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
     public void onClickChangeOpt(View v) {
-        //txtHello.setText(getResources().getString(R.string.hello_world));
-        
     }
 
     public void onClickStartTrnr(View v) {
-        //txtHello.setText(getResources().getString(R.string.start));
     }
     
     @Override

@@ -22,6 +22,8 @@
     <string name="work_on_dict_remove_hint">delete word</string>
     <string name="work_on_dict_search_inf">Searching info</string>
     <string name="work_on_dict_not_found">Sorry, word not found. Fill info below to add it and Save!</string>
+    <string name="work_on_dict_add_hint">add new word</string>
+    <string name="work_on_dict_alert_change_word">Correct in dict </string>
     <string name="error_inserting">Error during inserting values:</string>
     <string name="error_ins_msg">Type your word in search field</string>
     <string name="type_prompt">Choose a type</string>
