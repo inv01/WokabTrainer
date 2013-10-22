@@ -29,6 +29,7 @@
     <string name="type_prompt">Choose a type</string>
     <string name="work_on_dict_level_inf">Difficulty</string>
     <string name="work_on_dict_type_inf">Type</string>
+
     <string-array name="word_type_arrays">
         <item>der</item>
         <item>die</item>
@@ -37,7 +38,9 @@
         <item>adverb</item>
         <item>other</item>
     </string-array>
+
     <string name="level_prompt">Choose a level</string>
+
     <string-array name="word_level_arrays">
         <item>A1</item>
         <item>A2</item>
@@ -46,5 +49,11 @@
         <item>C1</item>
         <item>C2</item>
     </string-array>
+
+    <string name="title_activity_training">Train your brain!</string>
+    <string name="mArt">m</string>
+    <string name="fArt">f</string>
+    <string name="nArt">n</string>
+    <string name="noun">noun</string>
     
 </resources>

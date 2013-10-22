@@ -84,6 +84,8 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
     }
 
     public void onClickStartTrnr(View v) {
+        Intent intent = new Intent(this, TrainingActivity.class);
+        startActivity(intent);
     }
     
     @Override

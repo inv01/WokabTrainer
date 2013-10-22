@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:onClick="onClickSearch"
+            android:onClick="onSearchClick"
             android:background="@drawable/ic_search"
             android:contentDescription="@string/work_on_dict_search_hint"
             android:src="@drawable/ic_search" />

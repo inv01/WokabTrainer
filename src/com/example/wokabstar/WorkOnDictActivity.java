@@ -34,8 +34,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     private AutoCompleteTextView edtSearchWord, edtOutWord;
     private TrnrDbHelper mDbHelper;
     private SQLiteDatabase db;
-    private int selectedID;
-    private String selectedWord;
+    private DictWord selectedWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +59,13 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         edtSearchWord = (AutoCompleteTextView)findViewById(R.id.edtSearchWord);
         edtOutWord = (AutoCompleteTextView)findViewById(R.id.edtOutWord);
         btnRemove = (ImageButton)findViewById(R.id.btnRemove);
-        selectedID = -1;
-        selectedWord = "";
+        selectedWord = new DictWord();
 
         edtSearchWord.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                     long arg3) {
-                onClickSearch(arg1);
+                onSearchClick(arg1);
             }
         });
         
@@ -92,13 +90,13 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         alertDialog.show();
     }
     
-    public long getNewWordID(char art, String new_word,
-                                 String new_translation, int state, int level){
+    public DictWord getNewAddedWord(char art, String in_word,
+                                 String out_word, int state, int level){
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(TrnrEntry.COLUMN_NAME_ARTIKEL, ""+art);
-        values.put(TrnrEntry.COLUMN_NAME_IN_WORD, new_word);
-        values.put(TrnrEntry.COLUMN_NAME_OUT_WORD, new_translation);
+        values.put(TrnrEntry.COLUMN_NAME_IN_WORD, in_word);
+        values.put(TrnrEntry.COLUMN_NAME_OUT_WORD, out_word);
         values.put(TrnrEntry.COLUMN_NAME_STATE, state);
         values.put(TrnrEntry.COLUMN_NAME_LEVEL, level);
         // Insert the new row, returning the primary key value of the new row
@@ -107,10 +105,16 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                  null,
                  values);
         if (newRowId == -1){
-            System.out.println(getResources().getString(R.string.error_inserting) + art + ", " + new_word 
-                    + ", " + new_translation + ", " + state + ", " + level);
+            System.out.println(getResources().getString(R.string.error_inserting) + art + ", " + in_word 
+                    + ", " + out_word + ", " + state + ", " + level);
         }
-        return newRowId;
+        DictWord newWord = new DictWord((int) newRowId);
+        newWord.setArt(art);
+        newWord.setIn_word(in_word);
+        newWord.setOut_word(out_word);
+        newWord.setLevel(level);
+        newWord.setState(state);
+        return newWord;
     }
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -171,7 +175,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         db.close();
     }
 
-    public void onClickSearch(View v) {
+    public void onSearchClick(View v) {
         //check data
         String in_word = this.edtSearchWord.getText().toString();
         if (in_word.equals("")){
@@ -187,38 +191,38 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         Cursor c = db.rawQuery(select, null);
         
         if (c.moveToFirst()){
-            selectedID = c.getInt(c.getColumnIndex(TrnrEntry._ID));
-            selectedWord = c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD));
-            String word_type = c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL));
-            int word_level = c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL));
-            edtOutWord.setText(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD)));
+            selectedWord = new DictWord(c.getInt(c.getColumnIndex(TrnrEntry._ID)));
+            selectedWord.setIn_word(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD)));
+            selectedWord.setArt(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL)).charAt(0));
+            selectedWord.setLevel(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL)));
+            selectedWord.setOut_word(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD)));
+            edtOutWord.setText(selectedWord.getOut_word());
 
-            switch(word_type.charAt(0)){
+            switch(selectedWord.getArt()){
                 case TrnrEntry.TYPE_MASCULINE: sp_wordType.setSelection(0); break;
                 case TrnrEntry.TYPE_FEMININE: sp_wordType.setSelection(1); break;
                 case TrnrEntry.TYPE_NEUTRAL: sp_wordType.setSelection(2); break;
                 case TrnrEntry.TYPE_VERB: sp_wordType.setSelection(3); break;
                 case TrnrEntry.TYPE_ADJECTIVE: sp_wordType.setSelection(4); break;
                 case TrnrEntry.TYPE_OTHER: sp_wordType.setSelection(5); break;
-                default: assert false : word_type;
+                default: assert false : selectedWord.getArt();
             }
 
-            switch(word_level){
+            switch(selectedWord.getLevel()){
                 case TrnrEntry.LEVEL_A1: sp_wordLevel.setSelection(0); break;
                 case TrnrEntry.LEVEL_A2: sp_wordLevel.setSelection(1); break;
                 case TrnrEntry.LEVEL_B1: sp_wordLevel.setSelection(2); break;
                 case TrnrEntry.LEVEL_B2: sp_wordLevel.setSelection(3); break;
                 case TrnrEntry.LEVEL_C1: sp_wordLevel.setSelection(4); break;
                 case TrnrEntry.LEVEL_C2: sp_wordLevel.setSelection(5); break;
-                default: assert false : word_level;
+                default: assert false : selectedWord.getLevel();
             }
             txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
             setEditEnabled(true);
             setRecycleEnabled(true);
             setSaveEnabled(false);
         } else {
-          selectedID = -1;
-          selectedWord = "";
+          selectedWord = new DictWord();
           txtInfo.setText(getResources().getString(R.string.work_on_dict_not_found));
           enableAllFields(true);
           String s = edtSearchWord.getText().toString();
@@ -231,7 +235,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         c.close();
     }
     public void onEditClick(View v){
-        if (selectedID < 0) {clearFields();}
+        if (selectedWord.get_id() < 0) {clearFields();}
         
         String typedWord = edtSearchWord.getText().toString();
         if(!typedWord.equals(selectedWord)){
@@ -250,7 +254,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                   })
                   .setNeutralButton("Search "+typedWord, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
-                            onClickSearch(edtSearchWord);
+                            onSearchClick(edtSearchWord);
                         }
                    })
                   .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -296,11 +300,11 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         default: assert false : sp_wordType.getSelectedItemId();
     }
         int word_level = (int) sp_wordLevel.getSelectedItemId();
-        selectedWord = edtSearchWord.getText().toString();
-        if (selectedID < 0){
-            selectedID = (int) getNewWordID(word_type, selectedWord, edtOutWord.getText().toString(), 0, word_level);
+        String currentInWord = edtSearchWord.getText().toString();
+        if (selectedWord.get_id() < 0){
+            selectedWord = getNewAddedWord(word_type, currentInWord, edtOutWord.getText().toString(), 0, word_level);
         } else {
-            updateRecord(selectedID, word_type, selectedWord, edtOutWord.getText().toString(), 0, word_level);
+            updateRecord(selectedWord.get_id(), word_type, currentInWord, edtOutWord.getText().toString(), 0, word_level);
         }
         setAdapter();
         txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
@@ -324,7 +328,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     }
     
     public void onRemoveClick(View v){
-        if (selectedID < 0) return;
+        if (selectedWord.get_id() < 0) return;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(getResources().getString(R.string.alert_confirm_title));
         alertDialogBuilder
@@ -332,7 +336,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
             .setCancelable(false)
             .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    mDbHelper.onRemoveRecord(db, selectedID);
+                    mDbHelper.onRemoveRecord(db, selectedWord.get_id());
                     clearFields();
                     enableAllFields(false);
                     setRecycleEnabled(false);
