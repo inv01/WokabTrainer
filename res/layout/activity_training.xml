@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,100 +6,131 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".TrainingActivity" >
+    tools:context=".TrainingActivity" 
+    android:orientation="vertical">
+
 <LinearLayout
         android:id="@+id/linearLayoutForTargetWord"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_weight="1">
         <TextView
-        android:id="txtTargetWord"
-        android:layout_width="wrap_content"
+        android:id="@+id/txtTargetWord"
+        android:layout_width="fill_parent"
+        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:text="TEST"
-        android:textStyle="bold"
-        android:textSize="20pt"
-        android:typeface="sans"
-        android:textAllCaps="true"
-        android:textColor="#00CCFF"
-        android:shadowColor="#1868b2"
-        android:shadowRadius="2.0"
-        android:shadowDy="5.0"
-        android:shadowDx="5.0"
+        android:textSize="28sp"
+        android:typeface="monospace"
          />
+        <!-- android:shadowColor="#0066FF"
+        android:shadowRadius="15.0"
+        android:shadowDy="5.0"
+        android:shadowDx="5.0" -->
 </LinearLayout>
 <LinearLayout
         android:id="@+id/linearLayoutForResult"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        android:layout_below="@+id/linearLayoutForTargetWord" >
+        android:layout_weight="2">
 
     <TextView
-        android:id="txtResultWord"
-        android:layout_width="wrap_content"
+        android:id="@+id/txtResultWord"
+        android:layout_width="fill_parent"
+        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:text="REZ"
-        android:textStyle="bold"
-        android:textSize="20pt"
-        android:typeface="sans"
-        android:textColor="#C00000"
-        android:textAllCaps="true"
-        android:shadowColor="#ffd803"
-        android:shadowRadius="15.0"
+        android:textSize="28sp"
+        android:typeface="monospace"
          />
+    
+        <!-- android:shadowColor="#0066FF"
+        android:shadowRadius="15.0" -->
 </LinearLayout>
-
 <LinearLayout
         android:id="@+id/linearLayout_TransLettersLine1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayoutForResult" >
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="horizontal">
     <Button
         android:id="@+id/btnMart"
+        android:onClick="onClickArt"
         android:text="@string/mArt"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_blue"
+        android:background="@drawable/btn_art_draw"
+        android:layout_marginLeft="5dp"
         />
     <Button
         android:id="@+id/btnFart"
+        android:onClick="onClickArt"
         android:text="@string/fArt"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_blue"
+        android:background="@drawable/btn_art_draw"
+        android:layout_marginLeft="5dp"
         />
     <Button
         android:id="@+id/btnNart"
+        android:onClick="onClickArt"
         android:text="@string/nArt"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_blue"
+        android:background="@drawable/btn_art_draw"
+        android:layout_marginLeft="5dp"
         />
     <Button
         android:id="@+id/btnNotNoun"
         android:text="@string/noun"
-        android:layout_width="fill_parent"
+        android:onClick="onClickArt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_blue"
+        android:background="@drawable/btn_art_draw"
+        android:layout_marginLeft="5dp"
         />
 </LinearLayout>
-
 <LinearLayout
         android:id="@+id/linearLayout_TransLettersLine2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout_TransLettersLine1" >
-</LinearLayout>
-<LinearLayout
-        android:id="@+id/linearLayout_TransLettersLine3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout_TransLettersLine2" >
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 </LinearLayout>
 
-</RelativeLayout>
+<LinearLayout
+        android:id="@+id/linearLayout_TransLettersLine3"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+</LinearLayout>
+
+<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+    <Button
+        android:contentDescription="@string/menu_title_ResultWord"
+        android:onClick="onClickShowResult"
+        android:text="@string/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_hint_draw"
+        />
+    <ImageButton
+        android:contentDescription="@string/work_on_dict_remove_hint"
+        android:onClick="onRemoveClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_remove_draw"
+        />
+</LinearLayout>
+</LinearLayout>

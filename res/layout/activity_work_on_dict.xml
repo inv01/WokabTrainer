@@ -35,9 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:onClick="onSearchClick"
-            android:background="@drawable/ic_search"
-            android:contentDescription="@string/work_on_dict_search_hint"
-            android:src="@drawable/ic_search" />
+            android:background="@drawable/btn_search_draw"
+            android:contentDescription="@string/work_on_dict_search_hint"/>
 
     </LinearLayout>
 
@@ -62,18 +61,16 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:gravity="top" 
-        />
+            android:gravity="top"/>
         <ImageButton
             android:id="@+id/btnEdit"
             android:onClick="onEditClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@drawable/ic_pencil"
+            android:background="@drawable/btn_edit_draw"
             android:contentDescription="@string/work_on_dict_edit_hint"
-            android:enabled="false"
-            android:src="@drawable/ic_pencil"/>
+            android:enabled="false"/>
 
     </LinearLayout>
     
@@ -88,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/work_on_dict_type_inf"
-        android:text="@string/work_on_dict_type_inf" />
+        android:text="@string/work_on_dict_type_inf"/>
     <Spinner
         android:id="@+id/spinner1"
         android:entries="@array/word_type_arrays"
@@ -124,8 +121,7 @@
             android:layout_gravity="left"
             android:onClick="onSaveClick"
             android:contentDescription="@string/work_on_dict_save_hint"
-            android:background="@drawable/ic_floppy"
-            android:src="@drawable/ic_floppy"/>
+            android:background="@drawable/btn_save_draw"/>
         <ImageButton
             android:id="@+id/btnRemove"
             android:enabled="false"
@@ -134,7 +130,6 @@
             android:layout_gravity="left"
             android:onClick="onRemoveClick"
             android:contentDescription="@string/work_on_dict_remove_hint"
-            android:background="@drawable/ic_recycle"
-            android:src="@drawable/ic_recycle"/>
+            android:background="@drawable/btn_remove_draw"/>
     </LinearLayout>
 </RelativeLayout>

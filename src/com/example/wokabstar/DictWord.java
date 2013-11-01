@@ -30,19 +30,19 @@ public class DictWord {
         this.art = art;
     }
 
-    public String getIn_word() {
+    public String getForeignWord() {
         return in_word;
     }
 
-    public void setIn_word(String in_word) {
+    public void setForeignWord(String in_word) {
         this.in_word = in_word;
     }
 
-    public String getOut_word() {
+    public String getTranslation() {
         return out_word;
     }
 
-    public void setOut_word(String out_word) {
+    public void setTranslation(String out_word) {
         this.out_word = out_word;
     }
 

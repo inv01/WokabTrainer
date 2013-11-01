@@ -6,20 +6,17 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -60,7 +57,13 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         edtOutWord = (AutoCompleteTextView)findViewById(R.id.edtOutWord);
         btnRemove = (ImageButton)findViewById(R.id.btnRemove);
         selectedWord = new DictWord();
-
+        
+        Typeface font = Typeface.createFromAsset(getAssets(), "Chantelli_Antiqua.ttf");
+        txtInfo.setTypeface(font);
+        ((TextView)findViewById(R.id.txtLevelInfo)).setTypeface(font);
+        ((TextView)findViewById(R.id.txtTypeInfo)).setTypeface(font);
+        ((TextView)findViewById(R.id.txtHint)).setTypeface(font);
+        
         edtSearchWord.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -70,9 +73,9 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         });
         
         enableAllFields(false);
-        setEditEnabled(false);
-        setSaveEnabled(false);
-        setRecycleEnabled(false);
+        btnEdit.setEnabled(false);
+        btnSave.setEnabled(false);
+        btnRemove.setEnabled(false);
     }
     
     public void showAlert(String message){
@@ -89,7 +92,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-    
+
     public DictWord getNewAddedWord(char art, String in_word,
                                  String out_word, int state, int level){
         // Create a new map of values, where column names are the keys
@@ -110,8 +113,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         }
         DictWord newWord = new DictWord((int) newRowId);
         newWord.setArt(art);
-        newWord.setIn_word(in_word);
-        newWord.setOut_word(out_word);
+        newWord.setForeignWord(in_word);
+        newWord.setTranslation(out_word);
         newWord.setLevel(level);
         newWord.setState(state);
         return newWord;
@@ -192,11 +195,11 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         
         if (c.moveToFirst()){
             selectedWord = new DictWord(c.getInt(c.getColumnIndex(TrnrEntry._ID)));
-            selectedWord.setIn_word(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD)));
+            selectedWord.setForeignWord(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD)));
             selectedWord.setArt(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL)).charAt(0));
             selectedWord.setLevel(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL)));
-            selectedWord.setOut_word(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD)));
-            edtOutWord.setText(selectedWord.getOut_word());
+            selectedWord.setTranslation(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD)));
+            edtOutWord.setText(selectedWord.getTranslation());
 
             switch(selectedWord.getArt()){
                 case TrnrEntry.TYPE_MASCULINE: sp_wordType.setSelection(0); break;
@@ -218,9 +221,9 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                 default: assert false : selectedWord.getLevel();
             }
             txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
-            setEditEnabled(true);
-            setRecycleEnabled(true);
-            setSaveEnabled(false);
+            btnEdit.setEnabled(true);
+            btnRemove.setEnabled(true);
+            btnSave.setEnabled(false);
         } else {
           selectedWord = new DictWord();
           txtInfo.setText(getResources().getString(R.string.work_on_dict_not_found));
@@ -228,9 +231,9 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
           String s = edtSearchWord.getText().toString();
           clearFields();
           edtSearchWord.setText(s);
-          setSaveEnabled(true);
-          setEditEnabled(false);
-          setRecycleEnabled(false);
+          btnSave.setEnabled(true);
+          btnEdit.setEnabled(false);
+          btnRemove.setEnabled(false);
         }
         c.close();
     }
@@ -238,18 +241,18 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         if (selectedWord.get_id() < 0) {clearFields();}
         
         String typedWord = edtSearchWord.getText().toString();
-        if(!typedWord.equals(selectedWord)){
+        if(!typedWord.equals(selectedWord.getForeignWord())){
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle(getResources().getString(R.string.alert_confirm_title));
             alertDialogBuilder
                 .setMessage(getResources().getString(R.string.work_on_dict_alert_change_word)
-                        + " " + selectedWord + "->" + typedWord + "?")
+                        + " " + selectedWord.getForeignWord() + "->" + typedWord + "?")
                 .setCancelable(false)
                 .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
                         enableAllFields(true);
-                        setSaveEnabled(true);
-                        setRecycleEnabled(true);
+                        btnSave.setEnabled(true);
+                        btnRemove.setEnabled(true);
                     }
                   })
                   .setNeutralButton("Search "+typedWord, new DialogInterface.OnClickListener() {
@@ -267,8 +270,8 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         } else {
         
         enableAllFields(true);
-        setSaveEnabled(true);
-        setRecycleEnabled(true);
+        btnSave.setEnabled(true);
+        btnRemove.setEnabled(true);
         }
     }
     
@@ -309,9 +312,9 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         setAdapter();
         txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
         enableAllFields(false);
-        setSaveEnabled(false);
-        setRecycleEnabled(true);
-        setEditEnabled(true);
+        btnSave.setEnabled(false);
+        btnRemove.setEnabled(true);
+        btnEdit.setEnabled(true);
     }
     
     public void updateRecord(int id, char word_type, String searchWord, String outWord, int state, int word_level){
@@ -339,9 +342,9 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
                     mDbHelper.onRemoveRecord(db, selectedWord.get_id());
                     clearFields();
                     enableAllFields(false);
-                    setRecycleEnabled(false);
-                    setSaveEnabled(false);
-                    setEditEnabled(false);
+                    btnRemove.setEnabled(false);
+                    btnSave.setEnabled(false);
+                    btnEdit.setEnabled(false);
                     setAdapter();
                 }
               })
@@ -356,8 +359,6 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     
     public void clearFields(){
         txtInfo.setText(getResources().getString(R.string.work_on_dict_search_inf));
-        sp_wordType.setSelection(0);
-        sp_wordLevel.setSelection(0);
         edtOutWord.setText("");
         edtSearchWord.setText("");
     }
@@ -366,33 +367,6 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         sp_wordType.setEnabled(enabled);
         sp_wordLevel.setEnabled(enabled);
         edtOutWord.setEnabled(enabled);
-    }
-    
-    public void setRecycleEnabled(boolean enabled){
-        btnRemove.setEnabled(enabled);
-        if (enabled){
-            btnRemove.setImageDrawable(getResources().getDrawable(R.drawable.ic_recycle));
-        } else {
-            btnRemove.setImageDrawable(getResources().getDrawable(R.drawable.ic_recycle_disable));
-        }
-    }
-
-    public void setSaveEnabled(boolean enabled){
-        btnSave.setEnabled(enabled);
-        if (enabled){
-            btnSave.setImageDrawable(getResources().getDrawable(R.drawable.ic_floppy));
-        } else {
-              btnSave.setImageDrawable(getResources().getDrawable(R.drawable.ic_floppy_disable));
-        }
-    }
-
-    public void setEditEnabled(boolean enabled){
-        btnEdit.setEnabled(enabled);
-        if (enabled){
-            btnEdit.setImageDrawable(getResources().getDrawable(R.drawable.ic_pencil));
-        } else {
-            btnEdit.setImageDrawable(getResources().getDrawable(R.drawable.ic_pencil_disable));
-        }
     }
 
     public void setAdapter() {

@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,46 +6,102 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
-
+    tools:context=".MainActivity"
+    android:orientation="vertical" >
+<LinearLayout 
+    android:id="@+id/line1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"  
+    android:layout_weight="2">
+    
     <TextView
         android:id="@+id/txtHello"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
+        android:text="@string/hello_world"/>
+    <ImageView
+        android:id="@+id/imgCherry1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_cherry"
+        android:contentDescription="@string/prize"
+        />
+    <ImageView
+        android:id="@+id/imgCherry2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_cherry"
+        android:contentDescription="@string/prize"
+        />
+    <ImageView
+        android:id="@+id/imgCherry3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_cherry"
+        android:contentDescription="@string/prize"
+        />
+</LinearLayout>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"  
+    android:layout_weight="1">
     <ImageButton
         android:id="@+id/btnEditDict"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtHello"
-        android:layout_below="@+id/txtHello"
         android:onClick="onClickEditDict"
-        android:background="@drawable/ic_dict"
+        android:background="@drawable/btn_dict_draw"
         android:contentDescription="@string/edit_dict"
-        android:src="@drawable/ic_dict"/>
-    
+     />
+    <TextView
+        android:id="@+id/txtEditDict"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:clickable="true"
+        android:text="@string/edit_dict"/>
+</LinearLayout>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"  
+    android:layout_weight="1">
     <ImageButton
         android:id="@+id/btnStartTrnr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtHello"
-        android:layout_toRightOf="@+id/btnEditDict"
         android:onClick="onClickStartTrnr"
-        android:background="@drawable/ic_start"
+        android:background="@drawable/btn_start_draw"
         android:contentDescription="@string/start"
-        android:src="@drawable/ic_start"/>
-
+        />
+    <TextView
+        android:id="@+id/txtStartTrnr"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:clickable="true"
+        android:text="@string/start"/>
+</LinearLayout>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"  
+    android:layout_weight="1">
     <ImageButton
         android:id="@+id/btnChangeOpt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btnStartTrnr"
-        android:layout_below="@+id/txtHello"
         android:onClick="onClickChangeOpt"
-        android:background="@drawable/ic_options"
-        android:contentDescription="@string/t_opt"
-        android:src="@drawable/ic_options"/>
-
-
-</RelativeLayout>
+        android:background="@drawable/btn_options_draw"
+        android:contentDescription="@string/t_opt"/>
+    <TextView
+        android:id="@+id/txtChangeOpt"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:clickable="true"
+        android:text="@string/t_opt"/>
+  </LinearLayout>
+</LinearLayout>
