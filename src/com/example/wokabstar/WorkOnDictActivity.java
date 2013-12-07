@@ -3,6 +3,7 @@ package com.example.wokabstar;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
@@ -278,18 +280,11 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     public void onSaveClick(View v){
         //check data
         if (edtSearchWord.getText().toString().equals("") || edtOutWord.getText().toString().equals("")){
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle(getResources().getString(R.string.alert_info_title));
-            alertDialogBuilder
-                .setMessage(getResources().getString(R.string.alert_empty_info))
-                .setCancelable(true)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        dialog.cancel();
-                    }
-                  });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            Context context = getApplicationContext();
+            CharSequence text = getResources().getString(R.string.alert_empty_info);
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
             return;
         }
         char word_type = 'x';

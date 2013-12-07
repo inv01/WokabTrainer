@@ -103,7 +103,7 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
 
     public int getCompletedRowsNum(){
         String select = "SELECT "+TrnrEntry._ID + " FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
-                TrnrEntry.COLUMN_NAME_STATE + "='1'";
+                TrnrEntry.COLUMN_NAME_STATE + "='4'";
         Cursor c = db.rawQuery(select, null);
         int i = c.getCount();
         c.close();
@@ -112,7 +112,7 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
 
     public int getRepeatRowsNum(){
         String select = "SELECT "+TrnrEntry._ID+ " FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
-                TrnrEntry.COLUMN_NAME_STATE + "='0'";
+                TrnrEntry.COLUMN_NAME_STATE + "<'4'";
         Cursor c = db.rawQuery(select, null);
         int i = c.getCount();
         c.close();
@@ -124,7 +124,8 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
     }
 
     public void onClickChangeOpt(View v) {
-
+        Intent intent = new Intent(this, OptionsActivity.class);
+        startActivity(intent);
     }
 
     public void onClickStartTrnr(View v) {

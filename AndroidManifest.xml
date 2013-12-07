@@ -7,8 +7,11 @@
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="18" />
-    <permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -34,6 +37,17 @@
         <activity
             android:name="com.example.wokabstar.TrainingActivity"
             android:label="@string/title_activity_training" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.wokabstar.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.wokabstar.OptionsActivity"
+            android:label="@string/title_activity_options" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.wokabstar.MainActivity" />
         </activity>
     </application>
+
 </manifest>

@@ -2,8 +2,6 @@ package com.example.wokabstar;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -13,10 +11,13 @@ import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
@@ -30,6 +31,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
 
@@ -41,6 +43,8 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     Button btnNotNoun;
     TreeMap<String, DictWord> tm;
     Iterator<DictWord> dictItr;
+    boolean isArtClicked, isWasMistake;
+    String adtLongWordSymbs;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +74,11 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
             NavUtils.navigateUpFromSameTask(this);
-            return true;
+            return true;/*
         case R.id.menu_ShowResult : onClickShowResult(btnNotNoun);
             return true;
         case R.id.menu_Recycle : //;
-            return true;
+            return true;*/
         }
         
         return super.onOptionsItemSelected(item);
@@ -108,14 +112,25 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     }
     
     public void onClickLetter(Button btn){
-        if (isRightSymbolPicked(btn.getText().toString())){
+        if (isArtClicked && isRightSymbolPicked(btn.getText().toString())){
             StringBuilder resultWord = new StringBuilder(tv2.getText().toString());
             int index = resultWord.indexOf("*");
             resultWord.setCharAt(index, btn.getText().charAt(0));
             tv2.setText(resultWord);
 
             if (!isSimilarSymbolsLeft(btn.getText().toString())){
-                btn.setEnabled(false);
+                if (adtLongWordSymbs.length() > 0){
+                    btn.setText("" + adtLongWordSymbs.charAt(0));
+                    adtLongWordSymbs = (adtLongWordSymbs.length() > 1) ? 
+                                            adtLongWordSymbs.substring(1) : "";
+                } else btn.setEnabled(false);
+            }
+            //update status and get next word
+            if(resultWord.indexOf("*") < 0 && isArtClicked){
+                if (!isWasMistake) {
+                    currentWord.setState(currentWord.getState() + 1);
+                }
+                setWordToRepeat();
             }
         } else mistakeReact();
     }
@@ -124,22 +139,29 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         line1.removeAllViews();
         line2.removeAllViews();
 
-        String mixWord = getOrderedSymbols(currentWord.getForeignWord().toUpperCase());
-        int len = mixWord.length();
+        String allMixSymbols = getOrderedSymbols(currentWord.getForeignWord().toUpperCase());
+        String first8Letters = allMixSymbols;
+        adtLongWordSymbs = "";
+        if (allMixSymbols.length() > 8){
+            adtLongWordSymbs = allMixSymbols.substring(8);
+            first8Letters = allMixSymbols.substring(0, 8);
+        }
+        
+        int len = first8Letters.length();
         for(int i = 0; i < len; i++){
             Button btn = new Button(this);
-            btn.setText("" + mixWord.charAt(i));
+            btn.setText("" + first8Letters.charAt(i));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             params.setMargins(5, 0, 0, 0);
             btn.setLayoutParams(params);
             btn.setBackgroundResource(R.drawable.btn_art_draw);
             btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickLetter((Button) v);
-            }
-        });
+                @Override
+                public void onClick(View v) {
+                    onClickLetter((Button) v);
+                }
+            });
             if(len < 4 || i < len/2) line1.addView(btn);
             else line2.addView(btn);
         }
@@ -155,23 +177,41 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         super.onStart();
         mDbHelper = new TrnrDbHelper(this);
         db = mDbHelper.getWritableDatabase();
-        selectWordsToRepeat(10);
-        currentWord = getTargetWord();
-        reflectTargetWord(currentWord.getForeignWord());
+        selectWordsToRepeat();
+        setWordToRepeat();
      }
+    
+    public void setWordToRepeat(){
+        currentWord = getTargetWord();
+        if (currentWord.getForeignWord().length() == 0) {
+            
+            onBackPressed();
+        }
+        reflectTargetWord(currentWord.getForeignWord());
+        resetArt();
+        isWasMistake = false;
+    }
     
     public String getOrderedSymbols(String string){
         Set<Character> resultSet = new TreeSet<Character>();
+        Set<Character> adtSet = new TreeSet<Character>();
         for (int i = 0; i < string.length(); i++) {
-            resultSet.add(Character.valueOf(string.charAt(i)));
+            if (resultSet.size() == 8) {
+                if (!resultSet.contains(Character.valueOf(string.charAt(i)))) 
+                    adtSet.add(Character.valueOf(string.charAt(i)));
+                }
+            else resultSet.add(Character.valueOf(string.charAt(i)));
         }
         String s = "";
         Iterator<Character> i = resultSet.iterator();
-        while (i.hasNext())s += i.next();
-
+        while (i.hasNext()) s += i.next();
+        i = adtSet.iterator();
+        while (i.hasNext()) s += i.next();
         return s;
     }
+    
     public void reflectTargetWord(String tword){
+        if (tword.length() == 0) return;
         tv1.setText(currentWord.getTranslation().toUpperCase());
         String s = "";
         for (int i = 0; i < currentWord.getForeignWord().length(); i++)s += "*";
@@ -179,8 +219,18 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         showTargetLetters();
     }
      
-    public void selectWordsToRepeat(int count) {
-        String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + " WHERE state < 4 order by state LIMIT " + count;
+    public void selectWordsToRepeat() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+        String levelComparison = (prefs.getBoolean("strikt_level", false)) ? "=" : "<=";
+        String word_level = "" + prefs.getInt("word_level", 0);
+        int word_number = prefs.getInt("word_number", 0);
+        word_number = (word_number > 1) ? word_number * 10 : 
+                                        ((word_number == 0) ? 10 : 15);
+        String str_word_number = "" + word_number;
+        
+        String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
+                " WHERE state < 4 and level " + levelComparison + word_level + " order by state LIMIT " + 
+                str_word_number;
         Cursor c = db.rawQuery(sql, null);
         tm = new TreeMap<String, DictWord>();
         if(c.moveToFirst()){
@@ -192,43 +242,43 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
                 dw.setTranslation((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD))).toUpperCase());
                 dw.setState(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_STATE)));
                 tm.put(c.getString(c.getColumnIndex(TrnrEntry._ID)), dw);
-            }while(!c.moveToNext());
-        }
+            }while(c.moveToNext());
+        } else showInfo(getResources().getString(R.string.ta_nowords_alert_message));
         c.close();
         Collection<DictWord> colection = tm.values();
         dictItr = colection.iterator();
     }
     
-    
+    public void showInfo(String info){
+        Context context = getApplicationContext();
+        CharSequence text = info;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
     
     public DictWord getTargetWord(){
         DictWord tword = new DictWord();
-        /*String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + " WHERE state=0 LIMIT 1";
-        Cursor c = db.rawQuery(sql, null);
-        if(c.getCount() > 0){
-            c.moveToFirst();
-            tword = new DictWord(c.getInt(c.getColumnIndex(TrnrEntry._ID)));
-            tword.setForeignWord((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD))).toUpperCase());
-            tword.setArt(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL)).charAt(0));
-            tword.setLevel(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL)));
-            tword.setTranslation((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD))).toUpperCase());
-            tword.setState(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_STATE)));
-        } else { tword = new DictWord();}
-        c.close();*/
-        
-        /*for(Entry<String, DictWord> entry : tm.entrySet()) {
-            tword = entry.getValue();
-          }*/
         if(dictItr.hasNext()){
             tword = dictItr.next(); 
             }
         return tword;
     }
     
+    public void resetArt(){
+        for (int i = 0; i < lineArt.getChildCount(); i++ ){
+            Button btn = (Button) lineArt.getChildAt(i);
+            btn.setEnabled(true);
+            btn.setBackgroundResource(R.drawable.ic_blue);
+        }
+        isArtClicked = false;
+    }
+    
     public void onClickArt(View v){
         for (int i = 0; i < lineArt.getChildCount(); i++ ){
             Button btn = (Button) lineArt.getChildAt(i);
             btn.setEnabled(false);
+            btn.setBackgroundResource(R.drawable.ic_grey);
             if (getArtFromBtnText(btn.getText().toString())
                    .equals("" + currentWord.getArt())){
                 btn.setBackgroundResource(R.drawable.ic_green);
@@ -243,11 +293,12 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         if (getArtFromBtnText(btn.getText().toString())
                 .equals("" + currentWord.getArt())
                 || (isNotNoun && btn.equals(btnNotNoun))){
-          currentWord.setState(1);
+          //currentWord.setState(1);
         } else {
             mistakeReact();
             btn.setBackgroundResource(R.drawable.ic_orange);
         }
+        isArtClicked = true;
     }
     
     public String getArtFromBtnText(String string){
@@ -261,10 +312,12 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         currentWord.setState(0);
         ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE))
         .vibrate(500);
+        isWasMistake = true;
     }
     
     protected void onPause(){
         super.onPause();
+        updateWordState();
         db.close();
     }
 
@@ -284,6 +337,9 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
                 line.getChildAt(i).setEnabled(false);
                 line.getChildAt(i).setBackgroundResource(R.drawable.btn_art_draw);
             }
+
+      //get next word
+        setWordToRepeat();
     }
     
     public void onRemoveClick(View v){
@@ -291,12 +347,12 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(getResources().getString(R.string.alert_confirm_title));
         alertDialogBuilder
-            .setMessage(getResources().getString(R.string.ma_remove_alert_message))
+            .setMessage(getResources().getString(R.string.ta_skip_alert_message))
             .setCancelable(false)
             .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    mDbHelper.onRemoveRecord(db, currentWord.get_id());
-                    //
+                    currentWord.setState(4);
+                    setWordToRepeat();
                 }
               })
               .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -308,4 +364,20 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         alertDialog.show();
     }
     
+    public void updateWordState(){
+        Collection<DictWord> colection = tm.values();
+        Iterator <DictWord> itr = colection.iterator(); 
+        while(itr.hasNext()){
+            DictWord tword = itr.next();
+            updateRecord(tword.get_id(), tword.getState());
+        }
+    }
+    
+    public void updateRecord(int id, int state){
+        ContentValues values = new ContentValues();
+        values.put(TrnrEntry.COLUMN_NAME_STATE, state);
+        String selection = TrnrEntry._ID + " = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+        db.update(TrnrEntry.TABLE_TDICT, values, selection, selectionArgs);
+    }
 }
