@@ -1,7 +1,5 @@
 package com.example.wokabstar;
 
-import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
-
 import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
 public class MainActivity  extends android.support.v7.app.ActionBarActivity {
 

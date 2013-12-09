@@ -6,12 +6,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
-
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -22,6 +16,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar.LayoutParams;
 import android.view.Menu;
@@ -32,6 +30,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
 public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
 
