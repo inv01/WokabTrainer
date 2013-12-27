@@ -10,6 +10,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ public class OptionsActivity extends android.support.v7.app.ActionBarActivity {
 
     private Spinner sp_wordLevel, sp_numwords;
     private CheckBox checkBox;
+    private RadioButton rb1, rb2;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,18 @@ public class OptionsActivity extends android.support.v7.app.ActionBarActivity {
         sp_wordLevel = (Spinner) findViewById(R.id.spinner1);
         sp_numwords = (Spinner) findViewById(R.id.spinner2);
         checkBox = (CheckBox) findViewById(R.id.checkbox_strickt);
+        rb1 = (RadioButton) findViewById(R.id.rb1);
+        rb2 = (RadioButton) findViewById(R.id.rb2);
+        rb1.setTypeface(font);
+        rb2.setTypeface(font);
+        rb2.setEnabled(getIntent().getBooleanExtra("isEnoughWordsForSelfCheck", false));
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
         checkBox.setChecked(prefs.getBoolean("strikt_level", false));
         sp_wordLevel.setSelection(prefs.getInt("word_level", 0));
         sp_numwords.setSelection(prefs.getInt("word_number", 0));
+        rb1.setChecked(prefs.getBoolean("mode_learn", true));
+        rb2.setChecked(!prefs.getBoolean("mode_learn", false));
     }
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -73,6 +82,7 @@ public class OptionsActivity extends android.support.v7.app.ActionBarActivity {
                 PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = app_preferences.edit();
         editor.putBoolean("strikt_level", checkBox.isChecked());
+        editor.putBoolean("mode_learn", rb1.isChecked());
         editor.putInt("word_level", (int) sp_wordLevel.getSelectedItemId());
         editor.putInt("word_number", (int) sp_numwords.getSelectedItemId());
         editor.commit();

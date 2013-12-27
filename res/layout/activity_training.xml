@@ -12,10 +12,9 @@
 <LinearLayout
         android:id="@+id/linearLayoutForTargetWord"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:orientation="horizontal" >
         <TextView
         android:id="@+id/txtTargetWord"
         android:layout_width="fill_parent"
@@ -24,18 +23,13 @@
         android:textSize="28sp"
         android:typeface="monospace"
          />
-        <!-- android:shadowColor="#0066FF"
-        android:shadowRadius="15.0"
-        android:shadowDy="5.0"
-        android:shadowDx="5.0" -->
 </LinearLayout>
 <LinearLayout
         android:id="@+id/linearLayoutForResult"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:layout_weight="2">
+        android:orientation="horizontal">
 
     <TextView
         android:id="@+id/txtResultWord"
@@ -45,92 +39,131 @@
         android:textSize="28sp"
         android:typeface="monospace"
          />
-    
-        <!-- android:shadowColor="#0066FF"
-        android:shadowRadius="15.0" -->
 </LinearLayout>
+<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="horizontal"/>
+
 <LinearLayout
         android:id="@+id/linearLayout_TransLettersLine1"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <Button
+    <TextView
         android:id="@+id/btnMart"
-        android:onClick="onClickArt"
         android:text="@string/mArt"
+        android:background="@drawable/btn_art_draw"
+        android:onClick="onClickArt"
+        android:clickable="true"
+        android:scaleType="matrix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_art_draw"
         android:layout_marginLeft="5dp"
+        android:gravity="center"
         />
-    <Button
+    <TextView
         android:id="@+id/btnFart"
-        android:onClick="onClickArt"
         android:text="@string/fArt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:background="@drawable/btn_art_draw"
-        android:layout_marginLeft="5dp"
-        />
-    <Button
-        android:id="@+id/btnNart"
         android:onClick="onClickArt"
-        android:text="@string/nArt"
+        android:clickable="true"
+        android:scaleType="matrix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_art_draw"
         android:layout_marginLeft="5dp"
+        android:gravity="center"
         />
-    <Button
+    <TextView
+        android:id="@+id/btnNart"
+        android:text="@string/nArt"
+        android:background="@drawable/btn_art_draw"
+        android:onClick="onClickArt"
+        android:clickable="true"
+        android:scaleType="matrix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:gravity="center"
+        />
+    <TextView
         android:id="@+id/btnNotNoun"
         android:text="@string/noun"
+        android:background="@drawable/btn_art_draw"
         android:onClick="onClickArt"
+        android:clickable="true"
+        android:scaleType="matrix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_art_draw"
         android:layout_marginLeft="5dp"
+        android:gravity="center"
         />
 </LinearLayout>
 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="horizontal"/>
+
+<LinearLayout
         android:id="@+id/linearLayout_TransLettersLine2"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+</LinearLayout>
+<LinearLayout
+        android:id="@+id/addLinearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
         android:orientation="horizontal">
 </LinearLayout>
 
 <LinearLayout
         android:id="@+id/linearLayout_TransLettersLine3"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 </LinearLayout>
+<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="horizontal"/>
 
 <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="bottom">
-    <Button
+        android:layout_gravity="bottom">
+    <TextView
+        android:id="@+id/txtShowResult"
         android:contentDescription="@string/menu_title_ResultWord"
         android:onClick="onClickShowResult"
-        android:text="@string/hint"
+        android:clickable="true"
+        android:scaleType="matrix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_hint_draw"
+        android:gravity="center"
+        android:text="@string/hint"
         />
     <ImageButton
         android:contentDescription="@string/work_on_dict_remove_hint"
         android:onClick="onRemoveClick"
+        android:scaleType="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_remove_draw"
+        />
+    <TextView
+        android:id="@+id/txtShowState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         />
 </LinearLayout>
 </LinearLayout>

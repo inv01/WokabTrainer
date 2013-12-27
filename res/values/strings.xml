@@ -12,6 +12,8 @@
     <string name="ma_remove_alert_message">Remove word from dict?</string>
     <string name="ta_skip_alert_message">Done with this word?</string>
     <string name="ta_nowords_alert_message">No words for training.\nTry to change options.</string>
+    <string name="txt_moveWordTotrain">Move word back to training.</string>
+    <string name="txt_moveBack">del</string>
     <string name="alert_empty_info">Can not save empty fields.</string>
     <string name="edit_dict">Edit dictionary</string>
     <string name="start">Start training</string>
@@ -59,7 +61,7 @@
         <item>20</item>
         <item>30</item>
     </string-array>
-    
+
     <string name="title_activity_training">Train your brain!</string>
     <string name="mArt">der</string>
     <string name="fArt">die</string>
@@ -67,6 +69,12 @@
     <string name="noun">noun</string>
     <string name="hint">answ</string>
     <string name="prize">cherry prize</string>
+    <string name="left_number">- times left to repeat!</string>
     <string name="title_activity_options">Training options</string>
     <string name="strikt_level">Train only selected level</string>
+    <string name="title_activity_self_check">Self Check</string>
+    <string name="mode_learn">Training mode - LEARNING</string>
+    <string name="mode_selfcheck">Training mode - SELFCHECK</string>
+    <string name="txt_moveBackDesc"> - move this word to Learning</string>
+
 </resources>

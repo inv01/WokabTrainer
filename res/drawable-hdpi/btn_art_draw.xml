@@ -9,5 +9,5 @@
     android:drawable="@drawable/ic_green" />
 <item
     android:state_enabled="true"
-    android:drawable="@drawable/ic_blue" />
+    android:drawable="@drawable/ic_light_blue" />
 </selector>

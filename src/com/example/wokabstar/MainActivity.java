@@ -2,11 +2,13 @@ package com.example.wokabstar;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +24,7 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
     private TextView txtHello;
     private TrnrDbHelper mDbHelper;
     private SQLiteDatabase db;
+    private boolean isEnoughWordsForSelfCheck;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +83,29 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
                + getCompletedRowsNum() + " " + getResources().getString(R.string.ma_completed) + ", \n"
                + getRepeatRowsNum() + " " + getResources().getString(R.string.ma_to_repeat));
        checkPrize();
+       isEnoughWordsForSelfCheck = isEnoughWordsForSelfCheck();
        db.close();
     }
-    
+
+    public boolean isEnoughWordsForSelfCheck(){
+        String select = "SELECT "+TrnrEntry._ID+ " FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
+                TrnrEntry.COLUMN_NAME_STATE + "='4' limit 4";
+        Cursor c = db.rawQuery(select, null);
+        int i = c.getCount();
+        c.close();
+        select = "SELECT "+TrnrEntry._ID+ " FROM " + TrnrEntry.TABLE_TDICT + " limit 4";
+        Cursor cj = db.rawQuery(select, null);
+        int j = cj.getCount();
+        cj.close();
+        return j == 4 && i > 0;
+    }
+
     public void checkPrize(){
         ImageView cherry1 = ((ImageView) findViewById(R.id.imgCherry1));
         ImageView cherry2 = ((ImageView) findViewById(R.id.imgCherry2));
         ImageView cherry3 = ((ImageView) findViewById(R.id.imgCherry3));
-        cherry1.setVisibility((getCompletedRowsNum()/10 > 0) ? 0 : 4);
-        cherry2.setVisibility((getCompletedRowsNum()/100 > 0) ? 0 : 4);
+        cherry1.setVisibility((getCompletedRowsNum()/100 > 0) ? 0 : 4);
+        cherry2.setVisibility((getCompletedRowsNum()/500 > 0) ? 0 : 4);
         cherry3.setVisibility((getCompletedRowsNum()/1000 > 0) ? 0 : 4);
     }
     
@@ -124,11 +141,15 @@ public class MainActivity  extends android.support.v7.app.ActionBarActivity {
 
     public void onClickChangeOpt(View v) {
         Intent intent = new Intent(this, OptionsActivity.class);
+        intent.putExtra("isEnoughWordsForSelfCheck",isEnoughWordsForSelfCheck);
         startActivity(intent);
     }
 
     public void onClickStartTrnr(View v) {
-        Intent intent = new Intent(this, TrainingActivity.class);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+        boolean trnrMode = prefs.getBoolean("mode_learn", true);
+        Intent intent = (trnrMode ) ? new Intent(this, TrainingActivity.class) :
+                new Intent(this, SelfCheckActivity.class);
         startActivity(intent);
     }
     

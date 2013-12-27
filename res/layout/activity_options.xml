@@ -67,4 +67,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     </LinearLayout>
+    <RadioGroup
+        android:id="@+id/rgTrnrOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/rb1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_learn"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/rb2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_selfcheck"/>
+    </RadioGroup>
 </LinearLayout>

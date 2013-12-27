@@ -3,7 +3,6 @@ package com.example.wokabstar;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +20,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
@@ -78,21 +76,6 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         btnEdit.setEnabled(false);
         btnSave.setEnabled(false);
         btnRemove.setEnabled(false);
-    }
-    
-    public void showAlert(String message){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle(getResources().getString(R.string.alert_info_title));
-        alertDialogBuilder
-            .setMessage(message)
-            .setCancelable(true)
-            .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
-                    dialog.cancel();
-                }
-              });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
     }
 
     public DictWord getNewAddedWord(char art, String in_word,
@@ -161,26 +144,10 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
        mDbHelper = new TrnrDbHelper(this);
        db = mDbHelper.getWritableDatabase();
        setAdapter();
-       /*
-       db.execSQL("DELETE FROM " + TrnrEntry.TABLE_TDICT);
-       
-       addNewWordToDict(TrnrEntry.TYPE_ADJECTIVE, "schon","beautiful", 0, 0);
-       addNewWordToDict(TrnrEntry.TYPE_FEMININE, "schon123","beautiful123", 1, 1);
-       addNewWordToDict(TrnrEntry.TYPE_MASCULINE, "schonMann","beautifulMann", 2, 2);
-       addNewWordToDict(TrnrEntry.TYPE_FEMININE, "Frau","woman", 0, 0);
-       addNewWordToDict(TrnrEntry.TYPE_MASCULINE, "Mann","man", 0, 0);
-       addNewWordToDict(TrnrEntry.TYPE_NEUTRAL, "Madchen","girl", 0, 0);
-       addNewWordToDict(TrnrEntry.TYPE_VERB, "gehen","to go", 0, 0);
-       addNewWordToDict(TrnrEntry.TYPE_OTHER, "gehen wir","we go", 0, 0);
-       */
-    }
-    
-    protected void onPause(){
-        super.onPause();
-        db.close();
     }
 
     public void onSearchClick(View v) {
+        enableAllFields(false);
         //check data
         String in_word = this.edtSearchWord.getText().toString();
         if (in_word.equals("")){
@@ -280,11 +247,7 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
     public void onSaveClick(View v){
         //check data
         if (edtSearchWord.getText().toString().equals("") || edtOutWord.getText().toString().equals("")){
-            Context context = getApplicationContext();
-            CharSequence text = getResources().getString(R.string.alert_empty_info);
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            StarUtility.showInfo(getApplicationContext(), getResources().getString(R.string.alert_empty_info));
             return;
         }
         char word_type = 'x';
@@ -368,5 +331,10 @@ public class WorkOnDictActivity extends android.support.v7.app.ActionBarActivity
         String[] in_words = mDbHelper.getWordsMatchingQuery(db, "");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, in_words);
         edtSearchWord.setAdapter(adapter);
+    }
+
+    protected void onPause(){
+        super.onPause();
+        db.close();
     }
 }
