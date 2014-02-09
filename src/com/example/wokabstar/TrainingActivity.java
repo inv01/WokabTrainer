@@ -33,14 +33,14 @@ import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
 public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
 
-    DictWord currentWord;
-    TextView tvTranslate, tvFWord, tvState, btnNotNoun;
-    LinearLayout line1, line2, lineArt;
-    TreeMap<String, DictWord> tm;
-    Iterator<DictWord> dictItr;
-    boolean isArtClicked, isWasMistake;
-    String adtLongWordSymbs;
-    Typeface btnFont, baseFont,acFont;
+    private DictWord currentWord;
+    private TextView tvTranslate, tvFWord, tvState, btnNotNoun;
+    private LinearLayout line1, line2, lineArt;
+    private TreeMap<String, DictWord> tm;
+    private Iterator<DictWord> dictItr;
+    private boolean isArtClicked, isWasMistake, isNotNoun;
+    private String adtLongWordSymbs;
+    private Typeface btnFont, baseFont,acFont;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +100,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
 
     public boolean isSimilarSymbolsLeft(String string) {
         int index = tvFWord.getText().toString().indexOf("*");
-        if (index > -1)
-        return currentWord.getForeignWord()
+        if (index > -1) return currentWord.getForeignWord()
                 .substring(index).indexOf(string) > -1;
         return false;
     }
@@ -198,6 +197,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         if (currentWord.getForeignWord().length() == 0) {
             onBackPressed();
         }
+        isNotNoun = StarUtility.isNotNoun(currentWord.getArt());
         reflectTargetWord();
         resetArt();/*depends on reflectTargetWord();*/
         int num_req_repeat = 4 - currentWord.getState();
@@ -214,16 +214,15 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         
         tvTranslate.setText(currentWord.getTranslation().toUpperCase());
         String s = "";
-        String fWord = currentWord.getForeignWord();
-        for (int i = 0; i < fWord.length(); i++){ 
-            s += (Character.valueOf(fWord.charAt(i)) != ' ') ? "*" : " ";
+        for (char c:currentWord.getForeignWord().toCharArray()){ 
+            s += (c != ' ') ? "*" : " ";
         }
         tvFWord.setText(s);
         showTargetLetters();
     }
 
-    public void selectWordsToRepeat() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+    public static String getSql(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context); 
         String levelComparison = (prefs.getBoolean("strikt_level", false)) ? "=" : "<=";
         String word_level = "" + prefs.getInt("word_level", 0);
         int word_number = prefs.getInt("word_number", 0);
@@ -234,11 +233,13 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
                 " WHERE state < 4 and level " + levelComparison + word_level + " order by state desc LIMIT " + 
                 str_word_number;
-        
-        
+        return sql;
+    }
+    
+    public void selectWordsToRepeat() {
         TrnrDbHelper mDbHelper = new TrnrDbHelper(this);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery(sql, null);
+        Cursor c = db.rawQuery(getSql(this), null);
         tm = new TreeMap<String, DictWord>();
         if(c.moveToFirst()){
             do{
@@ -277,23 +278,20 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     }
 
     public void onClickArt(View v){
+        String curArt = StarUtility.getUIArt(currentWord.getArt());
         for (int i = 0; i < lineArt.getChildCount(); i++ ){
             TextView btn = (TextView) lineArt.getChildAt(i);
             btn.setEnabled(false);
             btn.setBackgroundResource(R.drawable.ic_grey);
-            if (getArtFromBtnText(btn.getText().toString())
-                   .equals("" + currentWord.getArt())){
+            if (btn.getText().toString().equals(curArt)){
                 btn.setBackgroundResource(R.drawable.ic_green);
               }
         }
-        boolean isNotNoun =((Character) currentWord.getArt()).equals((Character) TrnrEntry.TYPE_ADJECTIVE) 
-                || ((Character) currentWord.getArt()).equals((Character) TrnrEntry.TYPE_OTHER) 
-                || ((Character) currentWord.getArt()).equals((Character) TrnrEntry.TYPE_VERB); 
+
         if (isNotNoun) btnNotNoun.setBackgroundResource(R.drawable.ic_green);
 
         TextView btn = (TextView)v;
-        if (getArtFromBtnText(btn.getText().toString())
-                .equals("" + currentWord.getArt())
+        if (btn.getText().toString().equals(curArt)
                 || (isNotNoun && btn.equals(btnNotNoun))){
         } else {
             mistakeReact();
@@ -301,13 +299,6 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         }
         isArtClicked = true;
         updateStatus_getNewWord();
-    }
-
-    public String getArtFromBtnText(String string){
-        if(string.equals(getResources().getString(R.string.mArt))) return "" + TrnrEntry.TYPE_MASCULINE; else 
-            if(string.equals(getResources().getString(R.string.fArt))) return "" + TrnrEntry.TYPE_FEMININE; else
-                if(string.equals(getResources().getString(R.string.nArt))) return "" + TrnrEntry.TYPE_NEUTRAL; 
-                else return "";
     }
 
     public void mistakeReact() {
@@ -323,12 +314,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     }
 
     public void onClickShowResult(View v){
-        String art = "";
-        switch(currentWord.getArt()){
-        case TrnrEntry.TYPE_MASCULINE: art = getResources().getString(R.string.mArt); break;
-        case TrnrEntry.TYPE_FEMININE: art = getResources().getString(R.string.fArt); break;
-        case TrnrEntry.TYPE_NEUTRAL: art = getResources().getString(R.string.nArt); break;
-        }
+        String art = StarUtility.getUIArt(currentWord.getArt());
         tvFWord.setText((!art.equals("") ? (art + " "): "")
                 + currentWord.getForeignWord());
         currentWord.setState(0);

@@ -37,6 +37,7 @@ public class SelfCheckActivity extends android.support.v7.app.ActionBarActivity 
     private RadioGroup rgOptions;
     private Drawable baseBG;
     private int last_id;
+    private static final boolean isCurApiVersionG15 = android.os.Build.VERSION.SDK_INT  >= android.os.Build.VERSION_CODES.JELLY_BEAN;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,13 +160,15 @@ public class SelfCheckActivity extends android.support.v7.app.ActionBarActivity 
         int j=0;
         for (int i = rand_move; i < 4; i++){
             RadioButton rb = (RadioButton) rgOptions.getChildAt(i);
-            rb.setBackground(baseBG);
+            if (isCurApiVersionG15){rb.setBackground(baseBG);
+            }else {rb.setBackgroundColor(Color.parseColor("#FFFFFF"));}
             rb.setChecked(false);
             rb.setText(opts[j++]);
         }
         for (int i = 0; i < rand_move; i++){
             RadioButton rb = (RadioButton) rgOptions.getChildAt(i);
-            rb.setBackground(baseBG);
+            if (isCurApiVersionG15){rb.setBackground(baseBG);
+            }else {rb.setBackgroundColor(Color.parseColor("#FFFFFF"));}
             rb.setChecked(false);
             rb.setText(opts[j++]);
         }
@@ -174,6 +177,7 @@ public class SelfCheckActivity extends android.support.v7.app.ActionBarActivity 
     public void onPause(){
         super.onPause();
         SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(app_preferences.getBoolean("strat_again", false)) last_id = 0;
         SharedPreferences.Editor editor = app_preferences.edit();
         editor.putInt("last_id", last_id);
         editor.commit();

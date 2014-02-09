@@ -1,12 +1,6 @@
 package com.example.wokabstar;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
+import java.util.*;
 import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
 
 import android.content.ContentValues;
@@ -15,24 +9,22 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.ViewGroup;
 
 public class StarUtility {
 
     public static String getOrderedSymbols(String string){
-        Set<Character> resultSet = new TreeSet<Character>();
-        Set<Character> adtSet = new TreeSet<Character>();
-        for (int i = 0; i < string.length(); i++) {
-            Character c = Character.valueOf(string.charAt(i));
+        TreeSet<Character> resultSet = new TreeSet<Character>();
+        LinkedHashSet<Character> adtSet = new LinkedHashSet<Character>();
+        for (char c:string.toCharArray()) {
             if (c != ' '){
-            if (resultSet.size() == 8) {
-                if (!resultSet.contains(c)) 
-                    adtSet.add(c);
-                }
-            else resultSet.add(c);
-            }
+            if (resultSet.size() == 8 
+                    && !resultSet.contains(c)) {adtSet.add(c);}
+              else resultSet.add(c);}
         }
+        
         String s = "";
         Iterator<Character> i = resultSet.iterator();
         while (i.hasNext()) s += i.next();
@@ -41,51 +33,45 @@ public class StarUtility {
         return s;
     }
     
-    public static Typeface setFonts(DictWord curWord, Typeface ttf_checked1, 
-            Typeface ttf_checked2, Typeface ttf_base, Object args[]){
-        for (int i = 0; i < args.length; i++){
-            setObjTypeFont(args[i], ttf_checked1);
-        }
+    public static Typeface setFonts(DictWord curWord, Typeface niceFontForStaticEl, 
+            Typeface niceFontForDynamEl, Typeface defaultFont, Object components[]){
+        for (Object a:components) setComponentFont(a, niceFontForStaticEl);
+        
         String symbols = getOrderedSymbols(curWord.getForeignWord().toUpperCase() 
                 + curWord.getTranslation().toUpperCase());
-        for (int i = 0; i < symbols.length(); i++){
-            int chari = (int) (symbols.charAt(i));
-            if(!isCoveredByFontSymbol(chari, "Chantelli_Antiqua") || 
-                    !isCoveredByFontSymbol(chari, "alpha_echo" )){
-                for (int j = 0; j < args.length; j++){
-                    setObjTypeFont(args[j], ttf_base);
-                }
-                return ttf_base;
+        for (int chari:symbols.toCharArray()){
+            if(!isSymbolCoveredByFont(chari, "Chantelli_Antiqua") || 
+                    !isSymbolCoveredByFont(chari, "alpha_echo" )){
+                for (Object a:components) setComponentFont(a, defaultFont);
+                return defaultFont;
             }
         }
-        return ttf_checked2;
+        return niceFontForDynamEl;
     }
     
-    public static void setFont(String symbols, Typeface ttf_checked, String ttf_nameChecked, Typeface ttf_base, Object args[]){
-        for (int i = 0; i < args.length; i++){
-            setObjTypeFont(args[i], ttf_checked);
-        }
-        for (int i = 0; i < symbols.length(); i++){
-            if(!isCoveredByFontSymbol((int) (symbols.charAt(i)), ttf_nameChecked)){
-                for (int j = 0; j < args.length; j++){
-                    setObjTypeFont(args[j], ttf_base);
-                }
+    public static void setFont(String str, Typeface font_new, String font_new_name, 
+            Typeface font_default, Object components[]){
+        for (Object a:components) setComponentFont(a, font_new);
+        
+        for (int chari:str.toCharArray()){
+            if(!isSymbolCoveredByFont(chari, font_new_name)){
+                for (Object a:components) setComponentFont(a, font_default);
                 return;
             }
         }
     }
     
-    private static void setObjTypeFont(Object comp, Typeface ttf){
-        if (comp instanceof android.view.ViewGroup){
-            for(int i = 0; i< ((android.view.ViewGroup) comp).getChildCount(); i++){
-                setObjTypeFont(((android.view.ViewGroup) comp).getChildAt(i), ttf);
+    private static void setComponentFont(Object comp, Typeface font){
+        if (comp instanceof ViewGroup){
+            for(int i = 0; i< ((ViewGroup) comp).getChildCount(); i++){
+                setComponentFont(((ViewGroup) comp).getChildAt(i), font);
             }
-        } else if (comp instanceof android.widget.TextView){
-            ((android.widget.TextView) comp).setTypeface(ttf);
+        } else if (comp instanceof TextView){
+            ((TextView) comp).setTypeface(font);
         }
     }
     
-    private static boolean isCoveredByFontSymbol(int chari, String font_name){
+    private static boolean isSymbolCoveredByFont(int chari, String font_name){
         if (font_name.equals("Chantelli_Antiqua"))
         return (!Arrays.asList(new int[]{240,248}).contains(chari) &&
                         ((chari > 32 && chari < 127) ||
@@ -108,9 +94,7 @@ public class StarUtility {
     }
 
     public static void showInfo(Context context, String info){
-        CharSequence text = info;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
+        Toast toast = Toast.makeText(context, info, Toast.LENGTH_SHORT);
         toast.show();
     }
     
@@ -130,22 +114,27 @@ public class StarUtility {
         int word_number = prefs.getInt("word_number", 0);
         word_number = (word_number > 1) ? word_number * 10 : ((word_number == 0) ? 10 : 15);
         
+        String ordby = (mode_learn) ? TrnrEntry.COLUMN_NAME_STATE + " desc " : TrnrEntry._ID;
         String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
                 " WHERE " + TrnrEntry.COLUMN_NAME_STATE + " " + comp_operator +" 4 and "+ TrnrEntry.COLUMN_NAME_LEVEL + 
                 " " + levelComparison + word_level +
-                id_condition + " order by " + TrnrEntry.COLUMN_NAME_STATE + " desc LIMIT " + word_number;
+                id_condition + " order by " + ordby + " LIMIT " + word_number;
 
         TreeMap<String, DictWord> tm = new TreeMap<String, DictWord>();
         tm = getFilledTreeMap(tm, db, sql);
         
+        SharedPreferences.Editor editor = prefs.edit();
         if (!mode_learn && tm.size() < word_number && lastId != 0){
             int req_col = word_number - tm.size();
             String a_sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
                     " WHERE " + TrnrEntry._ID + " >= 0 and " + TrnrEntry.COLUMN_NAME_STATE + " = 4 and " + TrnrEntry.COLUMN_NAME_LEVEL +
                     " " + levelComparison + word_level +
-                    " order by " + TrnrEntry._ID + " desc LIMIT " + req_col;
+                    " order by " + TrnrEntry._ID + " LIMIT " + req_col;
             tm = getFilledTreeMap(tm, db, a_sql);
-        }
+            
+            editor.putBoolean("strat_again", true);
+        } else editor.putBoolean("strat_again", false);
+        editor.commit();
         
         if(tm.isEmpty()) showInfo(context, msg);
         db.close();
@@ -174,7 +163,7 @@ public class StarUtility {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
                         TrnrEntry.COLUMN_NAME_OUT_WORD + " <> '" + curWord.getTranslation() + "' and "+
-                        TrnrEntry._ID + " > " + curWord.get_id() +" LIMIT 3";
+                        TrnrEntry._ID + " <> " + curWord.get_id() +" order by RANDOM() LIMIT 3";
         TreeMap<String, DictWord> tm = new TreeMap<String, DictWord>();
         tm = getFilledTreeMap(tm, db, sql);
         if(tm.size() < 3) showInfo(context, msg);
@@ -206,5 +195,20 @@ public class StarUtility {
             db.update(TrnrEntry.TABLE_TDICT, values, selection, selectionArgs);
         }
         db.close();
+    }
+    
+    public static boolean isNotNoun(char art){
+        return (art == TrnrEntry.TYPE_ADJECTIVE) 
+        || (art == TrnrEntry.TYPE_OTHER) 
+        || (art == TrnrEntry.TYPE_VERB);
+    }
+    
+    public static String getUIArt(char art){
+        List<String> uiArts = Arrays.asList(new String[]{"der", "die", "das"});
+        List<Character> dbArts = Arrays.asList(new Character[]{TrnrEntry.TYPE_MASCULINE, TrnrEntry.TYPE_FEMININE, TrnrEntry.TYPE_NEUTRAL});
+        if (dbArts.contains(art)){
+            return uiArts.get(dbArts.indexOf(art));
+        }
+        return "";
     }
 }
