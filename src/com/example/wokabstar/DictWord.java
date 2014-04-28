@@ -1,12 +1,14 @@
 package com.example.wokabstar;
 
-public class DictWord {
+public class DictWord implements java.io.Serializable{
 
+    private static final long serialVersionUID = 1L;
     private char art;
     private String in_word;
     private String out_word;
     private int state;
     private int level;
+    private int lng;
     private int _id;
     
     public int get_id() {
@@ -28,6 +30,14 @@ public class DictWord {
 
     public void setArt(char art) {
         this.art = art;
+    }
+    
+    public int getLng() {
+        return lng;
+    }
+
+    public void setLng(int lng) {
+        this.lng = lng;
     }
 
     public String getForeignWord() {

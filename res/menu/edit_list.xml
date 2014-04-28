@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_edit"
+        android:orderInCategory="100"
+        android:title="@string/work_on_dict_edit_hint"/>
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:title="@string/work_on_dict_remove_hint"/>
+    <item
+        android:id="@+id/action_exclude"
+        android:orderInCategory="100"
+        android:title="@string/work_on_dict_exclude"/>
+    <item
+        android:id="@+id/action_move_training"
+        android:orderInCategory="100"
+        android:title="@string/work_on_dict_learned"/>
+    <item
+        android:id="@+id/action_uncheck_all"
+        android:orderInCategory="100"
+        android:title="@string/work_on_dict_clear_selection"/>
+</menu>

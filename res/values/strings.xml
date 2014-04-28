@@ -2,45 +2,61 @@
 <resources>
 
     <string name="app_name">WokabStar</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_listview">Show in list</string>
+    <string name="action_exportdict">Export dict</string>
+    <string name="action_importdict">Import dict</string>
+    <string name="ma_to_learn"> - to learn</string>
     <string name="ma_to_repeat"> - to repeat</string>
     <string name="ma_completed"> - completed</string>
-    <string name="hello_world">Easy dict learning! </string>
+    <string name="ma_statistic">Statistic</string>
+    <string name="hello_world">Easy word learning! </string>
     <string name="ma_to_remember"> - in dictionary</string>
     <string name="alert_confirm_title">Confirmation</string>
-    <string name="alert_info_title">Information</string>
     <string name="ma_remove_alert_message">Remove word from dict?</string>
     <string name="ta_skip_alert_message">Done with this word?</string>
     <string name="ta_nowords_alert_message">No words for training.\nTry to change options.</string>
-    <string name="txt_moveWordTotrain">Move word back to training.</string>
-    <string name="txt_moveBack">del</string>
+    <string name="txt_excludeWord">- I know this word well.</string>
     <string name="alert_empty_info">Can not save empty fields.</string>
     <string name="edit_dict">Edit dictionary</string>
     <string name="start">Start training</string>
     <string name="t_opt">Options</string>
     <string name="title_activity_work_on_dict">Work On Dictionary</string>
+    <string name="dict_not_exp">Dictionary not exported.</string>
+    <string name="print_dict_notexp">Printable dictionary not exported.</string>
+    <string name="dict_not_imported">Dictionary not imported.</string>
+    <string name="imported_words_mode">Importing new words:</string>
+    <string name="imported_words_mode_learning">mark all for LEARNING</string>
+    <string name="imported_words_mode_foreign">import my dictionaries</string>
+    <string name="not_found_file">No file for import in Downloads</string>
+    <string name="saved_in_downloads">saved in Downloads</string>
     <string name="work_on_dict_hint">What to search?</string>
+    <string name="work_on_dict_exporting">Saving in Downloads</string>
+    <string name="work_on_dict_importing">Importing new words</string>
+    <string name="work_on_dict_noitems">No words selected</string>
     <string name="work_on_dict_search_hint">Search button</string>
     <string name="work_on_dict_edit_hint">Edit</string>
     <string name="work_on_dict_save_hint">Save</string>
     <string name="work_on_dict_remove_hint">Delete</string>
+    <string name="work_on_dict_clear_selection">Clear selection</string>
+    <string name="work_on_dict_exclude">Mark as remembered</string>
+    <string name="work_on_dict_learned">Mark for training</string>
     <string name="work_on_dict_search_inf">Searching info</string>
-    <string name="work_on_dict_not_found">Sorry, word not found. Fill info below to add it and Save!</string>
+    <string name="work_on_dict_done">Done</string>
+    <string name="work_on_dict_deleted">Words deleted</string>
+    <string name="work_on_dict_oneword_only">Select only one word</string>
     <string name="work_on_dict_alert_change_word">Correct in dict </string>
     <string name="error_inserting">Error during inserting values:</string>
-    <string name="error_ins_msg">Type your word in search field</string>
     <string name="type_prompt">Choose a type</string>
     <string name="work_on_dict_level_inf">Difficulty</string>
     <string name="work_on_dict_type_inf">Type</string>
-    <string name="training_show_word">Translation</string>
     <string name="menu_title_ResultWord">Answer</string>
 
     <string-array name="word_type_arrays">
-        <item>der</item>
-        <item>die</item>
-        <item>das</item>
+        <item>masc</item>
+        <item>fem</item>
+        <item>neut</item>
         <item>verb</item>
-        <item>adverb</item>
+        <item>adj</item>
         <item>other</item>
     </string-array>
 
@@ -61,20 +77,73 @@
         <item>20</item>
         <item>30</item>
     </string-array>
-
+    <string-array name="languages_arrays">
+        <item>Albanian</item><!-- 0 -->
+        <item>Basque</item><!-- 1 -->
+        <item>Breton</item><!-- 2 -->
+        <item>Chamorro</item><!-- 3 -->
+        <item>Danish</item><!-- 4 -->
+        <item>Dutch</item><!-- 5 -->
+        <item>English</item><!-- 6 -->
+        <item>Estonian</item><!-- 7 -->
+        <item>Faroese</item><!-- 8 -->
+        <item>Finnish</item><!-- 9 -->
+        <item>French</item><!-- 10 -->
+        <item>Frisian</item><!-- 11 -->
+        <item>Galician</item><!-- 12 -->
+        <item>German</item><!-- 13 -->
+        <item>Icelandic</item><!-- 14 -->
+        <item>Italian</item><!-- 15 -->
+        <item>Malagasy</item><!-- 16 -->
+        <item>Norwegian</item><!-- 17 -->
+        <item>Portuguese</item><!-- 18 -->
+        <item>Russian</item><!-- 19 -->
+        <item>Spanish</item><!-- 20 -->
+        <item>Swedish</item><!-- 21 -->
+        <item>Ukrainian</item><!-- 22 -->
+        <item>Other</item><!-- 23 -->
+    </string-array>
+    <string-array name="lang_articles_arrays">
+        <item></item><!-- 0 masc,fem,neut,noun-->
+        <item></item><!-- 1 -->
+        <item></item><!-- 2 masc,fem,,noun-->
+        <item></item><!-- 3 -->
+        <item></item><!-- 4 com,,neut,noun-->
+        <item>de, ,het,nom</item><!-- 5 -->
+        <item></item><!-- 6 -->
+        <item></item><!-- 7 -->
+        <item>tann, ,tað,nom</item><!-- 8 -->
+        <item></item><!-- 9 -->
+        <item>le,la, ,nom</item><!-- 10 -->
+        <item></item><!-- 11 -->
+        <item>o,a, ,nom</item><!-- 12 -->
+        <item>der,die,das,nom</item><!-- 13 -->
+        <item></item><!-- 14 -->
+        <item>il,la, ,nom</item><!-- 15 -->
+        <item></item><!-- 16 -->
+        <item></item><!-- 17 -->
+        <item>o,a, ,nom</item><!-- 18 -->
+        <item></item><!-- 19 -->
+        <item>el,la,lo,nom</item><!-- 20 -->
+        <item></item><!-- 21 -->
+        <item></item><!-- 22 -->
+        <item>masc,fem,neut,noun</item><!-- 23 -->
+    </string-array>
+    
     <string name="title_activity_training">Train your brain!</string>
     <string name="mArt">der</string>
     <string name="fArt">die</string>
     <string name="nArt">das</string>
     <string name="noun">noun</string>
-    <string name="hint">answ</string>
     <string name="prize">cherry prize</string>
     <string name="left_number">- times left to repeat!</string>
     <string name="title_activity_options">Training options</string>
+    <string name="less">less</string>
+    <string name="more">more</string>
     <string name="strikt_level">Train only selected level</string>
+    <string name="train_art">Do not train article</string>
     <string name="title_activity_self_check">Self Check</string>
+    <string name="select_language">Select language</string>
     <string name="mode_learn">Training mode - LEARNING</string>
     <string name="mode_selfcheck">Training mode - SELFCHECK</string>
-    <string name="txt_moveBackDesc"> - move this word to Learning</string>
-
 </resources>

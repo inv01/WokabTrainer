@@ -3,8 +3,8 @@
 <item
     android:state_pressed="true"
     android:state_enabled="true"
-    android:drawable="@drawable/ic_green" />
+    android:drawable="@drawable/ic_answ_pressed" />
 <item
     android:state_enabled="true"
-    android:drawable="@drawable/ic_yellow" />
+    android:drawable="@drawable/ic_answ" />
 </selector>

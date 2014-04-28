@@ -1,8 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_showlist"
         android:orderInCategory="100"
-        android:title="@string/action_settings"/>
-
+        android:title="@string/action_listview"/>
+    <item
+        android:id="@+id/action_exportdict"
+        android:orderInCategory="100"
+        android:title="@string/action_exportdict"/>
+    <item
+        android:id="@+id/action_importdict"
+        android:orderInCategory="100"
+        android:title="@string/action_importdict"/>
 </menu>

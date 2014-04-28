@@ -41,6 +41,7 @@
          />
 </LinearLayout>
 <LinearLayout
+        android:id="@+id/free_space_arranger00"
         android:layout_width="wrap_content"
         android:layout_height="0dip"
         android:layout_weight="1"
@@ -102,6 +103,7 @@
         />
 </LinearLayout>
 <LinearLayout
+        android:id="@+id/free_space_arranger0"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
@@ -129,6 +131,7 @@
         android:orientation="horizontal">
 </LinearLayout>
 <LinearLayout
+        android:id="@+id/free_space_arranger1"
         android:layout_width="wrap_content"
         android:layout_height="0dip"
         android:layout_weight="1"
@@ -139,17 +142,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="bottom">
-    <TextView
-        android:id="@+id/txtShowResult"
+    <ImageButton
         android:contentDescription="@string/menu_title_ResultWord"
         android:onClick="onClickShowResult"
-        android:clickable="true"
-        android:scaleType="matrix"
+        android:scaleType="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_hint_draw"
         android:gravity="center"
-        android:text="@string/hint"
         />
     <ImageButton
         android:contentDescription="@string/work_on_dict_remove_hint"
@@ -157,12 +157,12 @@
         android:scaleType="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_remove_draw"
+        android:background="@drawable/btn_up_draw"
         />
     <TextView
         android:id="@+id/txtShowState"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
         />
 </LinearLayout>

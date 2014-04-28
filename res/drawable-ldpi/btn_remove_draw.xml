@@ -8,10 +8,6 @@
     android:state_enabled="true"
     android:drawable="@drawable/ic_recycle_click" />
 <item
-    android:state_focused="true"
-    android:state_enabled="true"
-    android:drawable="@drawable/ic_recycle_roll" />
-<item
     android:state_enabled="true"
     android:drawable="@drawable/ic_recycle" />
 </selector>

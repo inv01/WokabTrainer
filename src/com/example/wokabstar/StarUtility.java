@@ -1,7 +1,7 @@
 package com.example.wokabstar;
 
 import java.util.*;
-import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
+import com.example.wokabstar.TrnrDbHelper.DbEn;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,11 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.preference.PreferenceManager;
 import android.view.ViewGroup;
 
 public class StarUtility {
 
-    public static String getOrderedSymbols(String string){
+    public static String getOrdSymbols(String string){
+        string = string.toUpperCase(Locale.getDefault());
         TreeSet<Character> resultSet = new TreeSet<Character>();
         LinkedHashSet<Character> adtSet = new LinkedHashSet<Character>();
         for (char c:string.toCharArray()) {
@@ -37,8 +39,8 @@ public class StarUtility {
             Typeface niceFontForDynamEl, Typeface defaultFont, Object components[]){
         for (Object a:components) setComponentFont(a, niceFontForStaticEl);
         
-        String symbols = getOrderedSymbols(curWord.getForeignWord().toUpperCase() 
-                + curWord.getTranslation().toUpperCase());
+        String symbols = getOrdSymbols(curWord.getForeignWord() 
+                + curWord.getTranslation());
         for (int chari:symbols.toCharArray()){
             if(!isSymbolCoveredByFont(chari, "Chantelli_Antiqua") || 
                     !isSymbolCoveredByFont(chari, "alpha_echo" )){
@@ -104,20 +106,21 @@ public class StarUtility {
         
         String levelComparison = (prefs.getBoolean("strikt_level", false)) ? "=" : "<=";
         String word_level = "" + prefs.getInt("word_level", 0);
+        String selected_lng = " and " + DbEn.CN_LNG + "=" + prefs.getInt("trnr_language", 13) + " ";
         
         //save and check last id of repeated word and get exactly N words from that point
         int lastId = prefs.getInt("last_id", 0);
         boolean mode_learn = prefs.getBoolean("mode_learn", true);
         String comp_operator = (mode_learn) ? "<" : "=";
-        String id_condition = (!mode_learn) ? (" and " + TrnrEntry._ID + " >= " + lastId) : "";
+        String id_condition = (!mode_learn) ? (" and " + DbEn._ID + " >= " + lastId) : "";
         
         int word_number = prefs.getInt("word_number", 0);
         word_number = (word_number > 1) ? word_number * 10 : ((word_number == 0) ? 10 : 15);
         
-        String ordby = (mode_learn) ? TrnrEntry.COLUMN_NAME_STATE + " desc " : TrnrEntry._ID;
-        String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
-                " WHERE " + TrnrEntry.COLUMN_NAME_STATE + " " + comp_operator +" 4 and "+ TrnrEntry.COLUMN_NAME_LEVEL + 
-                " " + levelComparison + word_level +
+        String ordby = (mode_learn) ? DbEn.CN_STATE + " desc " : DbEn._ID;
+        String sql = "SELECT * FROM " + DbEn.TABLE_TDICT + 
+                " WHERE " + DbEn.CN_STATE + " " + comp_operator +" 4 and "+ DbEn.CN_LEVEL + 
+                " " + levelComparison + word_level + selected_lng +
                 id_condition + " order by " + ordby + " LIMIT " + word_number;
 
         TreeMap<String, DictWord> tm = new TreeMap<String, DictWord>();
@@ -126,10 +129,10 @@ public class StarUtility {
         SharedPreferences.Editor editor = prefs.edit();
         if (!mode_learn && tm.size() < word_number && lastId != 0){
             int req_col = word_number - tm.size();
-            String a_sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
-                    " WHERE " + TrnrEntry._ID + " >= 0 and " + TrnrEntry.COLUMN_NAME_STATE + " = 4 and " + TrnrEntry.COLUMN_NAME_LEVEL +
-                    " " + levelComparison + word_level +
-                    " order by " + TrnrEntry._ID + " LIMIT " + req_col;
+            String a_sql = "SELECT * FROM " + DbEn.TABLE_TDICT + 
+                    " WHERE " + DbEn._ID + " >= 0 and " + DbEn.CN_STATE + " = 4 and " + DbEn.CN_LEVEL +
+                    " " + levelComparison + word_level + selected_lng +
+                    " order by " + DbEn._ID + " LIMIT " + req_col;
             tm = getFilledTreeMap(tm, db, a_sql);
             
             editor.putBoolean("strat_again", true);
@@ -144,13 +147,14 @@ public class StarUtility {
         Cursor c = db.rawQuery(sql, null);
         if(c.moveToFirst()){
             do{
-                DictWord dw = new DictWord(c.getInt(c.getColumnIndex(TrnrEntry._ID)));
-                dw.setForeignWord((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD))).toUpperCase());
-                dw.setArt(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL)).charAt(0));
-                dw.setLevel(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL)));
-                dw.setTranslation((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD))).toUpperCase());
-                dw.setState(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_STATE)));
-                String id = c.getString(c.getColumnIndex(TrnrEntry._ID));
+                DictWord dw = new DictWord(c.getInt(c.getColumnIndex(DbEn._ID)));
+                dw.setForeignWord((c.getString(c.getColumnIndex(DbEn.CN_IN_WORD))).toUpperCase(Locale.getDefault()));
+                dw.setArt(c.getString(c.getColumnIndex(DbEn.CN_ARTIKEL)).charAt(0));
+                dw.setLevel(c.getInt(c.getColumnIndex(DbEn.CN_LEVEL)));
+                dw.setTranslation((c.getString(c.getColumnIndex(DbEn.CN_OUT_WORD))).toUpperCase(Locale.getDefault()));
+                dw.setState(c.getInt(c.getColumnIndex(DbEn.CN_STATE)));
+                dw.setLng(c.getInt(c.getColumnIndex(DbEn.CN_LNG)));
+                String id = c.getString(c.getColumnIndex(DbEn._ID));
                 if (!tm.containsKey(id)) tm.put(id, dw);
             }while(c.moveToNext());
         }
@@ -160,10 +164,14 @@ public class StarUtility {
     
     public static TreeMap<String, DictWord> getOptionsForDictWord(DictWord curWord, TrnrDbHelper mDbHelper, 
             Context context, String msg) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context); 
+        String selected_lng = DbEn.CN_LNG + "=" + prefs.getInt("trnr_language", 13) + " and ";
+        
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + " WHERE " + 
-                        TrnrEntry.COLUMN_NAME_OUT_WORD + " <> '" + curWord.getTranslation() + "' and "+
-                        TrnrEntry._ID + " <> " + curWord.get_id() +" order by RANDOM() LIMIT 3";
+        String sql = "SELECT * FROM " + DbEn.TABLE_TDICT + " WHERE " + 
+                        selected_lng +
+                        DbEn.CN_OUT_WORD + " <> '" + curWord.getTranslation() + "' and "+
+                        DbEn._ID + " <> " + curWord.get_id() +" order by RANDOM() LIMIT 3";
         TreeMap<String, DictWord> tm = new TreeMap<String, DictWord>();
         tm = getFilledTreeMap(tm, db, sql);
         if(tm.size() < 3) showInfo(context, msg);
@@ -186,29 +194,46 @@ public class StarUtility {
         Iterator <DictWord> itr = colection.iterator(); 
         while(itr.hasNext()){
             DictWord tword = itr.next();
-            if (!(tword.getState() == 0)) continue;
+            if ((tword.getState() > 0) && (tword.getState() < 10) ) continue;
 
             ContentValues values = new ContentValues();
-            values.put(TrnrEntry.COLUMN_NAME_STATE, tword.getState());
-            String selection = TrnrEntry._ID + " = ?";
+            values.put(DbEn.CN_STATE, tword.getState());
+            String selection = DbEn._ID + " = ?";
             String[] selectionArgs = { String.valueOf(tword.get_id()) };
-            db.update(TrnrEntry.TABLE_TDICT, values, selection, selectionArgs);
+            db.update(DbEn.TABLE_TDICT, values, selection, selectionArgs);
         }
         db.close();
     }
     
     public static boolean isNotNoun(char art){
-        return (art == TrnrEntry.TYPE_ADJECTIVE) 
-        || (art == TrnrEntry.TYPE_OTHER) 
-        || (art == TrnrEntry.TYPE_VERB);
+        return (art == DbEn.TYPE_ADJECTIVE) 
+        || (art == DbEn.TYPE_OTHER) 
+        || (art == DbEn.TYPE_VERB);
     }
     
-    public static String getUIArt(char art){
-        List<String> uiArts = Arrays.asList(new String[]{"der", "die", "das"});
-        List<Character> dbArts = Arrays.asList(new Character[]{TrnrEntry.TYPE_MASCULINE, TrnrEntry.TYPE_FEMININE, TrnrEntry.TYPE_NEUTRAL});
+    public static String getUIArt(char art, Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context); 
+        String lng_arts = prefs.getString("lng_arts", "der,die,das,nom");
+        return getCurUIArt(art, lng_arts);
+    }
+    
+    public static String getCurUIArt(char art, String lng_arts){
+        if(lng_arts.length() == 0) return "";
+        StringTokenizer st = new StringTokenizer(lng_arts,",",false);
+        if(st.countTokens() == 4){
+            String[] arts = new String[3];
+            for(int i = 0; i < 3; i++){
+                arts[i] = st.nextToken();
+            }
+        //String[] arts = new String[]{"der", "die", "das"};
+        List<String> uiArts = Arrays.asList(arts);
+        List<Character> dbArts = Arrays.asList(new Character[]{DbEn.TYPE_MASCULINE, DbEn.TYPE_FEMININE, DbEn.TYPE_NEUTRAL});
         if (dbArts.contains(art)){
-            return uiArts.get(dbArts.indexOf(art));
-        }
+            String ui_article = uiArts.get(dbArts.indexOf(art));
+            if (ui_article.equals(" ") && dbArts.indexOf(art) == 1) return uiArts.get(0);
+            else if (ui_article.equals(" ")) return "";
+                    else return ui_article;
+        }}
         return "";
     }
 }

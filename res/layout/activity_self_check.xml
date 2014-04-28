@@ -49,19 +49,19 @@
         android:orientation="horizontal"
         android:layout_gravity="bottom">
     <ImageButton
-        android:contentDescription="@string/txt_moveWordTotrain"
-        android:onClick="onClickMoveToTraining"
+        android:contentDescription="@string/txt_excludeWord"
+        android:onClick="onClickExcludeFromTraining"
         android:scaleType="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_remove_draw"
+        android:background="@drawable/btn_up_draw"
         />
     <TextView
-        android:id="@+id/txtMoveBackDesc"
+        android:id="@+id/txtIknowThisWord"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/txt_moveBackDesc"
+        android:text="@string/txt_excludeWord"
         />
     </LinearLayout>
 </LinearLayout>

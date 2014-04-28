@@ -2,6 +2,8 @@ package com.example.wokabstar;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import android.annotation.TargetApi;
@@ -19,17 +21,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar.LayoutParams;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.wokabstar.TrnrDbHelper.TrnrEntry;
+import com.example.wokabstar.TrnrDbHelper.DbEn;
+import static com.example.wokabstar.StarUtility.getNextDictWord;
+import static com.example.wokabstar.StarUtility.getOrdSymbols;
 
 public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
 
@@ -39,8 +39,9 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     private TreeMap<String, DictWord> tm;
     private Iterator<DictWord> dictItr;
     private boolean isArtClicked, isWasMistake, isNotNoun;
-    private String adtLongWordSymbs;
+    private String adtLongWordSymbs, uiArts;
     private Typeface btnFont, baseFont,acFont;
+    private boolean isArtTrainingOn, isEmptyUiArts;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,23 +59,6 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
-        
-        return super.onOptionsItemSelected(item);
-    }
 
     public void init(){
         lineArt = (LinearLayout)findViewById(R.id.linearLayout_TransLettersLine1);
@@ -89,7 +73,6 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         baseFont = tvState.getTypeface();
         acFont = Typeface.createFromAsset(getAssets(), "alpha_echo.ttf");
         btnFont = Typeface.createFromAsset(getAssets(), "Chantelli_Antiqua.ttf");
-        ((TextView)findViewById(R.id.txtShowResult)).setTypeface(btnFont);
         tvState.setTypeface(btnFont);
     }
 
@@ -145,7 +128,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         line1.removeAllViews();
         line2.removeAllViews();
 
-        String allMixSymbols = StarUtility.getOrderedSymbols(currentWord.getForeignWord().toUpperCase());
+        String allMixSymbols = getOrdSymbols(currentWord.getForeignWord());
         String first8Letters = allMixSymbols;
         adtLongWordSymbs = "";
         if (allMixSymbols.length() > 8){
@@ -180,20 +163,39 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.training, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
     protected void onStart(){
         super.onStart();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+        isArtTrainingOn = !prefs.getBoolean("no_art_mode", false);
+        if (isArtTrainingOn){
+        uiArts = prefs.getString("lng_arts","der,die,das,nom");
+        isEmptyUiArts = (uiArts.length() == 0) ? true : false;
+        isArtTrainingOn = !isEmptyUiArts;
+        // initialize articles line
+        if(isArtTrainingOn){
+            lineArt = (LinearLayout)findViewById(R.id.linearLayout_TransLettersLine1);
+            StringTokenizer st = new StringTokenizer(uiArts,",",false);
+            if(st.countTokens() == 4){
+                int i = 0;
+                while (st.hasMoreTokens()) {
+                    String s = st.nextToken();
+                    TextView btn = (TextView) lineArt.getChildAt(i);
+                    btn.setTypeface(btnFont);
+                    btn.setText(s);
+                    if (s.equals(" ")) lineArt.removeViewAt(i--);
+                    i++;
+                }
+            }
+        }}
+        lineArt.setVisibility((isArtTrainingOn) ? 
+                  android.view.View.VISIBLE : android.view.View.INVISIBLE);
+        // end initialize articles line
         selectWordsToRepeat();
         setWordToRepeat();
      }
 
     public void setWordToRepeat(){
-        currentWord = getNextDictWord();
+        currentWord = getNextDictWord(dictItr);
         if (currentWord.getForeignWord().length() == 0) {
             onBackPressed();
         }
@@ -203,6 +205,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         int num_req_repeat = 4 - currentWord.getState();
         tvState.setText("" + num_req_repeat + " " + getResources().getString(R.string.left_number));
         isWasMistake = false;
+        tvFWord.setShadowLayer(0, 0, 0, 0);
     }
 
     public void reflectTargetWord(){
@@ -212,7 +215,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         btnFont = StarUtility.setFonts(currentWord, acFont, btnFont, 
                 baseFont, (new Object[] {tvTranslate, tvFWord}));
         
-        tvTranslate.setText(currentWord.getTranslation().toUpperCase());
+        tvTranslate.setText(currentWord.getTranslation().toUpperCase(Locale.getDefault()));
         String s = "";
         for (char c:currentWord.getForeignWord().toCharArray()){ 
             s += (c != ' ') ? "*" : " ";
@@ -225,13 +228,15 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context); 
         String levelComparison = (prefs.getBoolean("strikt_level", false)) ? "=" : "<=";
         String word_level = "" + prefs.getInt("word_level", 0);
+        String cur_lang = " and " + DbEn.CN_LNG + "=" + prefs.getInt("trnr_language", 13);
         int word_number = prefs.getInt("word_number", 0);
         word_number = (word_number > 1) ? word_number * 10 : 
                                         ((word_number == 0) ? 10 : 15);
         String str_word_number = "" + word_number;
         
-        String sql = "SELECT * FROM " + TrnrEntry.TABLE_TDICT + 
-                " WHERE state < 4 and level " + levelComparison + word_level + " order by state desc LIMIT " + 
+        String sql = "SELECT * FROM " + DbEn.TABLE_TDICT + 
+                " WHERE state < 4 and level " + levelComparison + 
+                word_level + cur_lang + " order by state desc LIMIT " + 
                 str_word_number;
         return sql;
     }
@@ -243,13 +248,13 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         tm = new TreeMap<String, DictWord>();
         if(c.moveToFirst()){
             do{
-                DictWord dw = new DictWord(c.getInt(c.getColumnIndex(TrnrEntry._ID)));
-                dw.setForeignWord((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_IN_WORD))).toUpperCase());
-                dw.setArt(c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_ARTIKEL)).charAt(0));
-                dw.setLevel(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_LEVEL)));
-                dw.setTranslation((c.getString(c.getColumnIndex(TrnrEntry.COLUMN_NAME_OUT_WORD))).toUpperCase());
-                dw.setState(c.getInt(c.getColumnIndex(TrnrEntry.COLUMN_NAME_STATE)));
-                tm.put(c.getString(c.getColumnIndex(TrnrEntry._ID)), dw);
+                DictWord dw = new DictWord(c.getInt(c.getColumnIndex(DbEn._ID)));
+                dw.setForeignWord((c.getString(c.getColumnIndex(DbEn.CN_IN_WORD))).toUpperCase(Locale.getDefault()));
+                dw.setArt(c.getString(c.getColumnIndex(DbEn.CN_ARTIKEL)).charAt(0));
+                dw.setLevel(c.getInt(c.getColumnIndex(DbEn.CN_LEVEL)));
+                dw.setTranslation((c.getString(c.getColumnIndex(DbEn.CN_OUT_WORD))).toUpperCase(Locale.getDefault()));
+                dw.setState(c.getInt(c.getColumnIndex(DbEn.CN_STATE)));
+                tm.put(c.getString(c.getColumnIndex(DbEn._ID)), dw);
             }while(c.moveToNext());
         } else StarUtility.showInfo(getApplicationContext(), 
                 getResources().getString(R.string.ta_nowords_alert_message));
@@ -259,26 +264,22 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         dictItr = colection.iterator();
     }
     
-    public DictWord getNextDictWord(){
-        DictWord tword = new DictWord();
-        if(dictItr.hasNext()){
-            tword = dictItr.next(); 
-            }
-        return tword;
-    }
-    
     public void resetArt(){
+        if (!isArtTrainingOn){
+            isArtClicked = true;
+            return;
+        }
         for (int i = 0; i < lineArt.getChildCount(); i++ ){
             TextView btn = (TextView) lineArt.getChildAt(i);
             btn.setEnabled(true);
             btn.setBackgroundResource(R.drawable.ic_light_blue);
-            btn.setTypeface(btnFont);
         }
         isArtClicked = false;
     }
 
     public void onClickArt(View v){
-        String curArt = StarUtility.getUIArt(currentWord.getArt());
+        String curArt = StarUtility.getUIArt(currentWord.getArt(),this);
+        if (curArt.equals("")) isNotNoun = true;
         for (int i = 0; i < lineArt.getChildCount(); i++ ){
             TextView btn = (TextView) lineArt.getChildAt(i);
             btn.setEnabled(false);
@@ -287,7 +288,7 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
                 btn.setBackgroundResource(R.drawable.ic_green);
               }
         }
-
+        
         if (isNotNoun) btnNotNoun.setBackgroundResource(R.drawable.ic_green);
 
         TextView btn = (TextView)v;
@@ -314,9 +315,26 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
     }
 
     public void onClickShowResult(View v){
-        String art = StarUtility.getUIArt(currentWord.getArt());
-        tvFWord.setText((!art.equals("") ? (art + " "): "")
-                + currentWord.getForeignWord());
+        String art = StarUtility.getUIArt(currentWord.getArt(),this);
+        if(art.length() > 0)art += " ";
+        tvFWord.setText(art + currentWord.getForeignWord());
+        switch(currentWord.getArt()){
+            case DbEn.TYPE_MASCULINE: 
+                tvFWord.setShadowLayer(2, 1, 1,
+                    getResources().getColor(R.color.blue_shadow));
+                break;
+            case DbEn.TYPE_FEMININE: 
+                tvFWord.setShadowLayer(2, 1, 1,
+                    getResources().getColor(R.color.pink_shadow));
+                break;
+            case DbEn.TYPE_NEUTRAL: 
+                tvFWord.setShadowLayer(2, 1, 1,
+                    getResources().getColor(R.color.gold_shadow));
+                break;
+            default:
+                tvFWord.setShadowLayer(0, 0, 0, 0);
+                break;
+        }
         currentWord.setState(0);
         tvState.setText("4 " + getResources().getString(R.string.left_number));
         //disable all buttons
@@ -365,10 +383,10 @@ public class TrainingActivity extends android.support.v7.app.ActionBarActivity {
         while(itr.hasNext()){
             DictWord tword = itr.next();
             ContentValues values = new ContentValues();
-            values.put(TrnrEntry.COLUMN_NAME_STATE, tword.getState());
-            String selection = TrnrEntry._ID + " = ?";
+            values.put(DbEn.CN_STATE, tword.getState());
+            String selection = DbEn._ID + " = ?";
             String[] selectionArgs = { String.valueOf(tword.get_id()) };
-            db.update(TrnrEntry.TABLE_TDICT, values, selection, selectionArgs);
+            db.update(DbEn.TABLE_TDICT, values, selection, selectionArgs);
         }
         db.close();
     }
